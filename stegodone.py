@@ -15,7 +15,7 @@ TEMPFILE = os.path.join(CWD,"stegodone.temp")
 RESULTSDIR = os.path.join(CWD,"results")
 
 # Load the image
-f = Image.open("CoolPic.png")
+f = Image.open("blind")
 
 def _dumpLSB(img,index):
 	"""
@@ -42,14 +42,14 @@ def _dumpLSB(img,index):
 
 # Change this to a primitive to dump any given index of a given color
 # Then, handle the weaving of those together in a different function
-def _dumpLSBRGB(rIndex = None,gIndex = None,bIndex = None):
+def _dumpLSBRGBA(rIndex = None,gIndex = None,bIndex = None,aIndex = None):
 	"""
 	Input: 
-		rIndex, gIndex, bIndex as array of integer indexes (up to 8) to dump
+		rIndex, gIndex, bIndex, aIndex as array of integer indexes (up to 8) to dump
 		ex: [0],None,None would dump only the least significant bit of the Red field
 	Action:
-		Creates a byte array containing the output of the LSB dump (RGB order) requested
-		If needed, it will use the least significant bit first, then bit plane order of red->green->blue
+		Creates a byte array containing the output of the LSB dump (RGBA order) requested
+		If needed, it will use the least significant bit first, then bit plane order of red->green->blue->alpha
 	Returns:
 		Byte array of the result of the action
 		ex: b'\x01\x02\x03\x04' etc
@@ -62,6 +62,7 @@ def _dumpLSBRGB(rIndex = None,gIndex = None,bIndex = None):
 	rDict = {}
 	gDict = {}
 	bDict = {}
+	aDict = {}
 	
 	#############
 	# Red Stuff #
@@ -84,7 +85,14 @@ def _dumpLSBRGB(rIndex = None,gIndex = None,bIndex = None):
 	if bIndex != None:
 		for index in bIndex:
 			bDict[index] = _dumpLSB(b,index)
-
+	
+	###############
+	# Alpha Stuff #
+	###############
+	if aIndex != None:
+		for index in aIndex:
+			aDict[index] = _dumpLSB(a,index)
+	
 	# Find the first byte for each pixel
 	#binStr2 = ''.join([str(byte & 1) for byte in r.tobytes()])
 	
@@ -111,6 +119,9 @@ def _dumpLSBRGB(rIndex = None,gIndex = None,bIndex = None):
 				binStr += gDict[index][bit]
 			if bIndex != None and index in bDict:
 				binStr += bDict[index][bit]
+			if aIndex != None and index in aDict:
+				binstr += aDict[index][bit]
+	
 	print("Third")	
 	# Parse those into bytes
 	bArray = []
@@ -158,7 +169,7 @@ for r in range(0,3):
 	for g in range(0,3):
 		for b in range(0,3):
 			print("Trying {0}.{1}.{2}".format(r,g,b))
-			o = _dumpLSBRGB(rIndex=[r],gIndex=[g],bIndex=[b])
+			o = _dumpLSBRGBA(rIndex=[r],gIndex=[g],bIndex=[b])
 			testOutput(o)
 
 
