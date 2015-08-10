@@ -14,11 +14,15 @@ TEMPFILE = os.path.join(CWD,"stegodone.temp")
 # TODO: Use python to make this dynamic
 RESULTSDIR = os.path.join(CWD,"results")
 
+# Make the folder if need be
+os.makedirs(RESULTSDIR,exist_ok=True)
+
 # Load the image
 f = Image.open("blind")
 
 def _dumpLSB(img,index):
 	"""
+	Mostly obsolete since extraction method changed
 	Input:
 		img == PIL image (type PIL.Image.Image)
 		index == integer from LSB to extract (0 == first bit, 1 == second bit, etc)
@@ -42,7 +46,7 @@ def _dumpLSB(img,index):
 
 # Change this to a primitive to dump any given index of a given color
 # Then, handle the weaving of those together in a different function
-def _dumpLSBRGBA(rIndex = None,gIndex = None,bIndex = None,aIndex = None):
+def _dumpLSBRGBA(rIndex = [],gIndex = [],bIndex = [],aIndex = []):
 	"""
 	Input: 
 		rIndex, gIndex, bIndex, aIndex as array of integer indexes (up to 8) to dump
@@ -54,83 +58,46 @@ def _dumpLSBRGBA(rIndex = None,gIndex = None,bIndex = None,aIndex = None):
 		Byte array of the result of the action
 		ex: b'\x01\x02\x03\x04' etc
 	"""
-	print("First")
-	# Split the file into parts
-	r,g,b = f.split()
-	
-	# Init the dicts
-	rDict = {}
-	gDict = {}
-	bDict = {}
-	aDict = {}
-	
-	#############
-	# Red Stuff #
-	#############
-	if rIndex != None:
-		for index in rIndex:
-			rDict[index] = _dumpLSB(r,index)
-	
-
-	################
-	# Greeen Stuff #
-	################
-	if gIndex != None:
-		for index in gIndex:
-			gDict[index] = _dumpLSB(g,index)
-
-	##############
-	# Blue Stuff #
-	##############
-	if bIndex != None:
-		for index in bIndex:
-			bDict[index] = _dumpLSB(b,index)
-	
-	###############
-	# Alpha Stuff #
-	###############
-	if aIndex != None:
-		for index in aIndex:
-			aDict[index] = _dumpLSB(a,index)
-	
-	# Find the first byte for each pixel
-	#binStr2 = ''.join([str(byte & 1) for byte in r.tobytes()])
-	
 	
 	##################
 	# Combine Output #
 	##################
-	print("Second")
 	# We'll be keeping the binary string here
 	binStr = ''
 
 	# Figure out valid index ranges
-	indexes = list(set((list(rDict.keys()) + list(gDict.keys()) + list(bDict.keys()))))
+	indexes = list(set(rIndex + gIndex + bIndex + aIndex))
 	indexes.sort()
-
+	
+	# Figure out what we have to work with
+	bands = f.getbands()
+	
+	# Get the image bytes
+	fBytes = f.tobytes()
+	
+	# TODO: The following assumes an ordering of RGBA. If this is ever not the case, things will get mixed up
 	# Loop through all the bytes of the image
-	for bit in range(0,f.size[0] * f.size[1]):
+	for byte in range(0,f.size[0] * f.size[1] * len(bands),len(bands)):
 		# Loop through all the possible desired indexes
 		for index in indexes:
 			# If this is a value we're extracting
-			if rIndex != None and index in rDict:
-				binStr += rDict[index][bit]
-			if gIndex != None and index in gDict:
-				binStr += gDict[index][bit]
-			if bIndex != None and index in bDict:
-				binStr += bDict[index][bit]
-			if aIndex != None and index in aDict:
-				binstr += aDict[index][bit]
+			if index in rIndex:
+				binStr += str(fBytes[byte + 0] >> index & 1)
+			if index in gIndex:
+				binStr += str(fBytes[byte + 1] >> index & 1)
+			if index in bIndex:
+				binStr += str(fBytes[byte + 2] >> index & 1)
+			if index in aIndex:
+				binStr += str(fBytes[byte + 3] >> index & 1)
 	
-	print("Third")	
 	# Parse those into bytes
 	bArray = []
 	for i in range(0,len(binStr),8):
 		bArray.append(int(binStr[i:i+8],2))
-	print("Fourth")	
+	
 	# Change bytes into a bit array for writing
 	bits = ''.join([chr(b) for b in bArray]).encode('iso-8859-1')
-	print("Fifth")	
+	
 	return bits
 
 def testOutput(b):
@@ -164,6 +131,10 @@ def testOutput(b):
 	except OSError:
 		pass
 
+
+#o = _dumpLSBRGBA(bIndex=[1,2,3],gIndex=[1],aIndex=[0])
+#print(o)
+#exit()
 
 for r in range(0,3):
 	for g in range(0,3):
