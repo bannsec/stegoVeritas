@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# TODO: Implement multi-threading pool: https://docs.python.org/3/library/concurrent.futures.html
+
 from PIL import Image
 import subprocess
 import binascii
@@ -17,6 +19,7 @@ RESULTSDIR = os.path.join(CWD,"results")
 
 # Make the folder if need be
 os.makedirs(RESULTSDIR,exist_ok=True)
+
 
 def _dumpLSB(img,index):
 	"""
@@ -133,25 +136,93 @@ def testOutput(b):
 # Get the commandline input
 parser = argparse.ArgumentParser(description='Yet another Stego tool')
 parser.add_argument('fileName',metavar='file',type=str,nargs=1,help='The file to analyze')
-args = parser.parse_args()
-#print(args.fileName[0])
+parser.add_argument('-imageTransform',action='store_true')
+parser.add_argument('-bruteLSB',action='store_true')
+parser.add_argument('-colorMap',nargs="*",metavar='N',type=int,help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
+parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int,help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
 
+args = parser.parse_args()
 fileName = args.fileName[0]
+
 f = Image.open(fileName)
-import modules.imageFilters as imageFilters
-imageFilters.run(f,RESULTSDIR)
-exit()
+hasAlpha = "A" in f.getbands()
+
+if args.colorMapRange != None:
+	args.colorMap = range(args.colorMapRange[0],args.colorMapRange[1]+1)
+
+if args.colorMap != None:
+	from modules.imageFilters import colorMap
+	colorMap(f,RESULTSDIR,args.colorMap)
+	exit(0)
+
+
+if args.imageTransform:
+	import modules.imageFilters as imageFilters
+	imageFilters.run(f,RESULTSDIR)
+
 
 #o = _dumpLSBRGBA(bIndex=[1,2,3],gIndex=[1],aIndex=[0])
 #print(o)
 #exit()
 
-for r in range(0,3):
-	for g in range(0,3):
-		for b in range(0,3):
-			print("Trying {0}.{1}.{2}".format(r,g,b))
-			o = _dumpLSBRGBA(rIndex=[r],gIndex=[g],bIndex=[b])
+if args.bruteLSB:
+	# Try all the same indexes first. More likely stuff up front.
+	# i.e.: 0,0,0  1,1,1,  2,2,2
+	for i in range(0,8):
+		print("Trying {0}.{0}.{0}".format(i))
+		o = _dumpLSBRGBA(rIndex=[i],gIndex=[i],bIndex=[i])
+		testOutput(o)
+
+	# Try Red
+	i = []
+	for x in range(8):
+		i.append(x)
+		print("Trying Red {0}".format(i))
+		o = _dumpLSBRGBA(rIndex=i)
+		testOutput(o)
+
+	# Try Green
+	i = []
+	for x in range(8):
+		i.append(x)
+		print("Trying Green {0}".format(i))
+		o = _dumpLSBRGBA(gIndex=i)
+		testOutput(o)
+
+	# Try Blue
+	i = []
+	for x in range(8):
+		i.append(x)
+		print("Trying Blue {0}".format(i))
+		o = _dumpLSBRGBA(bIndex=i)
+		testOutput(o)
+
+	# Try Alpha
+	if hasAlpha:
+		i = []
+		for x in range(8):
+			i.append(x)
+			print("Trying Alpha {0}".format(i))
+			o = _dumpLSBRGBA(aIndex=i)
 			testOutput(o)
+
+	# Try across the board
+	# i.e.: 0,0,0  01,01,01 etc
+	i = []
+	for x in range(8):
+		i.append(x)
+		print("Trying {0}x{0}x{0}".format(i))
+		o = _dumpLSBRGBA(rIndex=i,gIndex=i,bIndex=i)
+		testOutput(o)
+
+
+	exit(0)
+	for r in range(0,8):
+		for g in range(0,8):
+			for b in range(0,8):
+				print("Trying {0}.{1}.{2}".format(r,g,b))
+				o = _dumpLSBRGBA(rIndex=[r],gIndex=[g],bIndex=[b])
+				testOutput(o)
 
 
 # m = magic.Magic(magic.MAGIC_MIME)

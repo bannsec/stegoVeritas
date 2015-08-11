@@ -1,8 +1,43 @@
 from PIL import Image,ImageFilter
 import os
 import numpy
+from copy import copy
 
 # Take input PIL.Image file and perform many filters on it
+
+def colorMap(f,outDir,saveMap = []):
+	"""
+	Take care of the colormaps
+	"""
+	fileName = f.filename	
+
+	# f.putpalette(f.palette.getdata()[1])
+	pal = [255 for x in range(768)]
+
+	for save in saveMap:
+		pal[save*3] = 0
+		pal[save*3+1] = 0
+		pal[save*3+2] = 0
+	
+	# Break apart the color map to help see things
+	for i in range(0xff + 1):
+		pal2 = copy(pal)
+		pal2[i*3] = 0
+		pal2[i*3+1] = 0
+		pal2[i*3+2] = 0
+		f.putpalette(pal2)
+		# Change to numpy
+		#g = numpy.array(f)
+		# Xor our colormap index (keep our save here)
+		#g = g ^ (i | saveMap)
+		# Contrast
+		#g[g != 0] = 0xff
+		# Revert to image
+		#g = Image.fromarray(g)
+		# Save
+		f.save(os.path.join(outDir,fileName + "_{0}.png".format(i)))
+	
+	
 
 def run(f,outDir):
 	"""
@@ -27,6 +62,13 @@ def run(f,outDir):
 	# Using an else here to keep things simple. If you use f_a you will always have a working non-alpha image
 	else:
 		f_a = f
+
+	# Check what type of image is it
+	# ColorMap
+	if "P" in bands:
+		print("Colormap detected...")
+		colorMap(f,outDir)
+		return
 
 	###########
 	# Filters #
