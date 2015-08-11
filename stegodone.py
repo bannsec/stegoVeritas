@@ -6,6 +6,7 @@ import binascii
 import os, os.path
 import time
 import shutil
+import argparse
 
 # Get our current dir
 CWD = os.path.dirname(os.path.realpath(__file__))
@@ -16,9 +17,6 @@ RESULTSDIR = os.path.join(CWD,"results")
 
 # Make the folder if need be
 os.makedirs(RESULTSDIR,exist_ok=True)
-
-# Load the image
-f = Image.open("blind")
 
 def _dumpLSB(img,index):
 	"""
@@ -131,6 +129,18 @@ def testOutput(b):
 	except OSError:
 		pass
 
+
+# Get the commandline input
+parser = argparse.ArgumentParser(description='Yet another Stego tool')
+parser.add_argument('fileName',metavar='file',type=str,nargs=1,help='The file to analyze')
+args = parser.parse_args()
+#print(args.fileName[0])
+
+fileName = args.fileName[0]
+f = Image.open(fileName)
+import modules.imageFilters as imageFilters
+imageFilters.run(f,RESULTSDIR)
+exit()
 
 #o = _dumpLSBRGBA(bIndex=[1,2,3],gIndex=[1],aIndex=[0])
 #print(o)
