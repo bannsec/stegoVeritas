@@ -140,12 +140,46 @@ parser.add_argument('-imageTransform',action='store_true')
 parser.add_argument('-bruteLSB',action='store_true')
 parser.add_argument('-colorMap',nargs="*",metavar='N',type=int,help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
 parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int,help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
+parser.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
+parser.add_argument('-red',nargs='+',metavar='index',type=int)
+parser.add_argument('-green',nargs='+',metavar='index',type=int)
+parser.add_argument('-blue',nargs='+',metavar='index',type=int)
+parser.add_argument('-alpha',nargs='+',metavar='index',type=int)
 
 args = parser.parse_args()
 fileName = args.fileName[0]
 
 f = Image.open(fileName)
 hasAlpha = "A" in f.getbands()
+
+if args.extractLSB:
+	if args.red:
+		r = args.red
+	else:
+		r = []
+	if args.green:
+		g = args.green
+	else:
+		g = []
+	if args.blue:
+		b = args.blue
+	else:
+		b = []
+	if args.alpha:
+		a = args.alpha
+	else:
+		a = []
+
+	print("Extracting ({0},{1},{2},{3})".format(r,g,b,a))
+	
+	o = _dumpLSBRGBA(rIndex=r,gIndex=g,bIndex=a,aIndex=a)
+	f = open(os.path.join(RESULTSDIR,"LSBExtracted.bin"),"wb")
+	f.write(o)
+	f.close()
+
+	print("Extracted to {0}".format(os.path.join(RESULTSDIR,"LSBExtracted.bin")))
+	exit(0)
+
 
 if args.colorMapRange != None:
 	args.colorMap = range(args.colorMapRange[0],args.colorMapRange[1]+1)
