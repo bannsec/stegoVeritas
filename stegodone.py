@@ -44,6 +44,7 @@ def printFileInformation(fType,x):
 parser = argparse.ArgumentParser(description='Yet another Stego tool')
 parser.add_argument('fileName',metavar='file',type=str,nargs=1,help='The file to analyze')
 parser.add_argument('-outDir',metavar='dir',type=str,nargs=1,help='Directory to place output in. Defaults to ./results',default=[RESULTSDIR])
+parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
 #parser.add_argument('-auto',action='store_true',help='Automatically perform analysis on the file given.')
 parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
 parser.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
