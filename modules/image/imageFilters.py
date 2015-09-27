@@ -11,6 +11,11 @@ def colorMap(f,outDir,saveMap = []):
 	"""
 	fileName = f.filename	
 
+	# Verify we're working with a colormap
+	if f.mode != "P":
+		print("Input file doesn't appear to be a Color Map image... Returning")
+		return	
+	
 	# f.putpalette(f.palette.getdata()[1])
 	pal = [255 for x in range(768)]
 
@@ -39,7 +44,7 @@ def colorMap(f,outDir,saveMap = []):
 	
 	
 
-def run(f,outDir):
+def auto(f,outDir):
 	"""
 	Input:
 		f == PIL.Image class

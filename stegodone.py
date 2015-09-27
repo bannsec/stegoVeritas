@@ -3,141 +3,50 @@
 # TODO: Implement multi-threading pool: https://docs.python.org/3/library/concurrent.futures.html
 
 from PIL import Image
-import subprocess
 import binascii
 import os, os.path
-import time
-import shutil
 import argparse
-
-# Get our current dir
-CWD = os.path.dirname(os.path.realpath(__file__))
-
-TEMPFILE = os.path.join(CWD,"stegodone.temp")
-# TODO: Use python to make this dynamic
-RESULTSDIR = os.path.join(CWD,"results")
+from config import *
 
 # Make the folder if need be
 os.makedirs(RESULTSDIR,exist_ok=True)
 
-
-def _dumpLSB(img,index):
-	"""
-	Mostly obsolete since extraction method changed
-	Input:
-		img == PIL image (type PIL.Image.Image)
-		index == integer from LSB to extract (0 == first bit, 1 == second bit, etc)
-	Action:
-		Extract array of bits represented as integers
-	Returns:
-		Bit integer array (i.e.: [0,1,1,0,0,1,0,1 ...]
-	"""
-	# Make sure we're working with the right thing
-	if type(img) != Image.Image:
-		raise Exception("_dumpLSB: image type should be PIL.Image.Image.\nActual image type is {0}".format(type(img))) 
-	
-	# Check index
-	if index >= 8:
-		raise Exception("_dumpLSB: index cannot be >= 8.\nActual index is {0}".format(index))
-	
-	# Perform bit extraction
-	out = [str((byte >> index) & 1) for byte in img.tobytes()]
-	
-	return out
-
-# Change this to a primitive to dump any given index of a given color
-# Then, handle the weaving of those together in a different function
-def _dumpLSBRGBA(rIndex = [],gIndex = [],bIndex = [],aIndex = []):
-	"""
-	Input: 
-		rIndex, gIndex, bIndex, aIndex as array of integer indexes (up to 8) to dump
-		ex: [0],None,None would dump only the least significant bit of the Red field
-	Action:
-		Creates a byte array containing the output of the LSB dump (RGBA order) requested
-		If needed, it will use the least significant bit first, then bit plane order of red->green->blue->alpha
-	Returns:
-		Byte array of the result of the action
-		ex: b'\x01\x02\x03\x04' etc
-	"""
-	
-	##################
-	# Combine Output #
-	##################
-	# We'll be keeping the binary string here
-	binStr = ''
-
-	# Figure out valid index ranges
-	indexes = list(set(rIndex + gIndex + bIndex + aIndex))
-	indexes.sort()
-	
-	# Figure out what we have to work with
-	bands = f.getbands()
-	
-	# Get the image bytes
-	fBytes = f.tobytes()
-	
-	# TODO: The following assumes an ordering of RGBA. If this is ever not the case, things will get mixed up
-	# Loop through all the bytes of the image
-	for byte in range(0,f.size[0] * f.size[1] * len(bands),len(bands)):
-		# Loop through all the possible desired indexes
-		for index in indexes:
-			# If this is a value we're extracting
-			if index in rIndex:
-				binStr += str(fBytes[byte + 0] >> index & 1)
-			if index in gIndex:
-				binStr += str(fBytes[byte + 1] >> index & 1)
-			if index in bIndex:
-				binStr += str(fBytes[byte + 2] >> index & 1)
-			if index in aIndex:
-				binStr += str(fBytes[byte + 3] >> index & 1)
-	
-	# Parse those into bytes
-	bArray = []
-	for i in range(0,len(binStr),8):
-		bArray.append(int(binStr[i:i+8],2))
-	
-	# Change bytes into a bit array for writing
-	bits = ''.join([chr(b) for b in bArray]).encode('iso-8859-1')
-	
-	return bits
-
-def testOutput(b):
+def openFile(fileName):
 	"""
 	Input:
-		b = byte array output, generally from the dump functions
-		ex: b = b'\x01\x02\x03'
+		fileName == name of file to open
 	Action:
-		Test if output is worth keeping.
-		Initially, this is using the Unix file command on the output and checking for non "Data" returns
-	Return:
-		Nothing. Move output into keep directory if it's worth-while	
+		Attempt to open fileName in various ways to determine proper handler
+	Returns:
+		(fType,[f]) where fType is in ["Image"], and [f] contains the details of the opened file
+		The values returned here will be dependent on the type of file identified
 	"""
-
-	# Write out the buffer	
-	temp = open(TEMPFILE,"wb")
-	temp.write(b)
-	temp.close()
 	
-	# Run the file command
-	out = subprocess.check_output(["file",TEMPFILE])
-	
-	# We like anything that's not just data
-	if b': data\n' not in out:
-		print("Found something worth keeping!\n{0}".format(out))
-		shutil.move(TEMPFILE,os.path.join(RESULTSDIR,str(time.time())))
-
 	try:
-		# Remove our mess
-		os.unlink(TEMPFILE)
-	except OSError:
-		pass
+		f = Image.open(fileName)
+		return ("Image",[f])
+	except:
+		print("Error: Unknown or unsupported file type")
+		exit(1)
 
+
+def printFileInformation(fType,x):
+	if fType == "Image":
+		x = x[0]
+		print("Type:\t{0}".format(x.format_description))
+		print("Mode:\t{0}\n".format("ColorMap" if x.mode == "P" else x.mode))
+		return
+	else:
+		print("Error... Cannot determine file type")
+		return
 
 # Get the commandline input
 parser = argparse.ArgumentParser(description='Yet another Stego tool')
 parser.add_argument('fileName',metavar='file',type=str,nargs=1,help='The file to analyze')
-parser.add_argument('-imageTransform',action='store_true')
-parser.add_argument('-bruteLSB',action='store_true')
+parser.add_argument('-outDir',metavar='dir',type=str,nargs=1,help='Directory to place output in. Defaults to ./results',default=[RESULTSDIR])
+#parser.add_argument('-auto',action='store_true',help='Automatically perform analysis on the file given.')
+parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
+parser.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
 parser.add_argument('-colorMap',nargs="*",metavar='N',type=int,help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
 parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int,help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
 parser.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
@@ -149,36 +58,17 @@ parser.add_argument('-alpha',nargs='+',metavar='index',type=int)
 args = parser.parse_args()
 fileName = args.fileName[0]
 
-f = Image.open(fileName)
-hasAlpha = "A" in f.getbands()
+fType,fArray = openFile(fileName)
 
-if args.extractLSB:
-	if args.red:
-		r = args.red
-	else:
-		r = []
-	if args.green:
-		g = args.green
-	else:
-		g = []
-	if args.blue:
-		b = args.blue
-	else:
-		b = []
-	if args.alpha:
-		a = args.alpha
-	else:
-		a = []
+printFileInformation(fType,fArray)
+args.outDir = args.outDir[0]
 
-	print("Extracting ({0},{1},{2},{3})".format(r,g,b,a))
-	
-	o = _dumpLSBRGBA(rIndex=r,gIndex=g,bIndex=a,aIndex=a)
-	f = open(os.path.join(RESULTSDIR,"LSBExtracted.bin"),"wb")
-	f.write(o)
-	f.close()
+if fType == "Image":
+	import modules.image
+	modules.image.run(fArray,args)
 
-	print("Extracted to {0}".format(os.path.join(RESULTSDIR,"LSBExtracted.bin")))
-	exit(0)
+
+exit(0)
 
 
 if args.colorMapRange != None:
@@ -198,66 +88,6 @@ if args.imageTransform:
 #o = _dumpLSBRGBA(bIndex=[1,2,3],gIndex=[1],aIndex=[0])
 #print(o)
 #exit()
-
-if args.bruteLSB:
-	# Try all the same indexes first. More likely stuff up front.
-	# i.e.: 0,0,0  1,1,1,  2,2,2
-	for i in range(0,8):
-		print("Trying {0}.{0}.{0}".format(i))
-		o = _dumpLSBRGBA(rIndex=[i],gIndex=[i],bIndex=[i])
-		testOutput(o)
-
-	# Try Red
-	i = []
-	for x in range(8):
-		i.append(x)
-		print("Trying Red {0}".format(i))
-		o = _dumpLSBRGBA(rIndex=i)
-		testOutput(o)
-
-	# Try Green
-	i = []
-	for x in range(8):
-		i.append(x)
-		print("Trying Green {0}".format(i))
-		o = _dumpLSBRGBA(gIndex=i)
-		testOutput(o)
-
-	# Try Blue
-	i = []
-	for x in range(8):
-		i.append(x)
-		print("Trying Blue {0}".format(i))
-		o = _dumpLSBRGBA(bIndex=i)
-		testOutput(o)
-
-	# Try Alpha
-	if hasAlpha:
-		i = []
-		for x in range(8):
-			i.append(x)
-			print("Trying Alpha {0}".format(i))
-			o = _dumpLSBRGBA(aIndex=i)
-			testOutput(o)
-
-	# Try across the board
-	# i.e.: 0,0,0  01,01,01 etc
-	i = []
-	for x in range(8):
-		i.append(x)
-		print("Trying {0}x{0}x{0}".format(i))
-		o = _dumpLSBRGBA(rIndex=i,gIndex=i,bIndex=i)
-		testOutput(o)
-
-
-	exit(0)
-	for r in range(0,8):
-		for g in range(0,8):
-			for b in range(0,8):
-				print("Trying {0}.{1}.{2}".format(r,g,b))
-				o = _dumpLSBRGBA(rIndex=[r],gIndex=[g],bIndex=[b])
-				testOutput(o)
-
 
 # m = magic.Magic(magic.MAGIC_MIME)
 # subprocess.check_output(["file","CoolPic.png"])
