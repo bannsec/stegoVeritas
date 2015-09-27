@@ -56,6 +56,13 @@ def parsePNGChunk(t,c):
 	if t == "tEXt":
 		c2 = c.split(b"\x00")
 		print("{0:<25}: {1}".format(c2[0].decode('iso-8859-1'),c2[1].decode('iso-8859-1')))
+	# Not sure how to parse these yet...
+	if t == "iTXt":
+		print(c)
+		return ""
+	if t == "zTXt":
+		print(c)
+		return ""
 	return ""
 
 def JPEGMeta(f,args):
