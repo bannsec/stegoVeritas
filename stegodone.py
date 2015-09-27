@@ -71,15 +71,6 @@ if fType == "Image":
 exit(0)
 
 
-if args.colorMapRange != None:
-	args.colorMap = range(args.colorMapRange[0],args.colorMapRange[1]+1)
-
-if args.colorMap != None:
-	from modules.imageFilters import colorMap
-	colorMap(f,RESULTSDIR,args.colorMap)
-	exit(0)
-
-
 if args.imageTransform:
 	import modules.imageFilters as imageFilters
 	imageFilters.run(f,RESULTSDIR)
