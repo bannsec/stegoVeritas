@@ -108,7 +108,7 @@ def auto(f,args):
 	# JPEG and TIFF Metadata
 	if f.format == "JPEG" or f.format == "TIFF":
 		JPEGMeta(f,args)
-	if f.format == "PNG":
+	elif f.format == "PNG":
 		PNGMeta(f,args)
 	else:
 		print("No metadata parsing support for {0}".format(f.format))
