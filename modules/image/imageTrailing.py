@@ -13,9 +13,20 @@ def png(f,args):
 	
 	if len(pngFile) != 0:
 		print("Discovered Trailing Data:\n{0}".format(pngFile))
+		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+			outFile.write(pngFile)
+
+
+def bmp(f,args):
+	# This one is pretty easy
+	myBMP = open(f.filename,"rb").read()
 	
-	with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
-		outFile.write(pngFile)
+	size = unpack("<I",myBMP[2:6])[0]
+	
+	if len(myBMP[size:]) != 0:
+		print("Discovered Trailing Data:\n{0}".format(myBMP[size:]))
+		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+			outFile.write(myBMP[size:])
 
 
 def tiff(f,args):
@@ -167,6 +178,8 @@ def auto(f,args):
 			return
 		elif f.format == "PNG":
 			png(f,args)
+		elif f.format == "BMP":
+			bmp(f,args)
 		else:
 			print("Image Trailing: No support yet for format {0}".format(f.format))
 			return
