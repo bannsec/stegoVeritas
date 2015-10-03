@@ -3,6 +3,21 @@ from struct import unpack
 
 # Look for trailing data in images
 
+def png(f,args):
+	import png
+	
+	pngFile = open(f.filename,"rb").read()
+	
+	# TODO: This isn't 100% accurate. Rework to follow tags correctly.
+	pngFile = pngFile.split(b"IEND")[1][4:]
+	
+	if len(pngFile) != 0:
+		print("Discovered Trailing Data:\n{0}".format(pngFile))
+	
+	with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+		outFile.write(pngFile)
+
+
 def tiff(f,args):
 	"""
 	Input:
@@ -143,12 +158,17 @@ def auto(f,args):
 		Nothing
 	"""
 	
-	if f.format == "JPEG":
-		jpeg(f,args)
-		return
-	elif f.format == "TIFF":
-		tiff(f,args)
-		return
-	else:
-		print("Image Trailing: No support yet for format {0}".format(f.format))
-		return
+	try:
+		if f.format == "JPEG":
+			jpeg(f,args)
+			return
+		elif f.format == "TIFF":
+			tiff(f,args)
+			return
+		elif f.format == "PNG":
+			png(f,args)
+		else:
+			print("Image Trailing: No support yet for format {0}".format(f.format))
+			return
+	except:
+		print("Image Trailing: Something went wrong... please submit a bug report")
