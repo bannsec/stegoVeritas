@@ -138,7 +138,7 @@ class gif:
 		
 		# Sanity check
 		if self.gif[0] != ord("!"):
-			print("_parseExtentionBlock: Something went wrong. We should be at an extension block and we're not")
+			raise Exception("_parseExtentionBlock: Something went wrong. We should be at an extension block and we're not")
 			return
 		
 		# Dynamically function calling to make this easier
@@ -146,7 +146,7 @@ class gif:
 		if self.gif[1] in self.extentionFunctionLookup:
 			self.extentionFunctionLookup[self.gif[1]]()
 		else:
-			print("Extension {0} not implimented yet.".format(self.gif[1]))
+			raise Exception("Extension {0} not implimented yet.".format(self.gif[1]))
 			return
 		
 	def _parseCommentExtension(self):
@@ -159,7 +159,7 @@ class gif:
 		
 		# Sanity check
 		if self.gif[:2] != b"!\xfe":
-			print("_parseCommentExtension: We're not at a comment extension block.")
+			raise Exception("_parseCommentExtension: We're not at a comment extension block.")
 			return
 		
 		# Update our position
@@ -187,10 +187,10 @@ class gif:
 		
 		# Sanity check
 		if self.gif[:2] != b"!\xf9":
-			print("_parseGraphicControlExtension: We're not at a graphic control extension block.")
+			raise Exception("_parseGraphicControlExtension: We're not at a graphic control extension block.")
 			return
 		
-		print("Not parsing GraphicControlExtention for now")
+		#print("Not parsing GraphicControlExtention for now")
 			
 		# Skip this for now
 		self.gif = self.gif[8:]
@@ -205,7 +205,7 @@ class gif:
 		
 		# Sanity check
 		if self.gif[:2] != b"!\xff":
-			print("_parseApplicationExtension: We're not at an Application Extension block.")
+			raise Exception("_parseApplicationExtension: We're not at an Application Extension block.")
 			return
 		
 		# In actuality this should be static size of 11
@@ -257,7 +257,7 @@ class gif:
 		
 		# Sanity check
 		if self.gif[0] != ord(","):
-			print("_parseImageDescriptor: File not at Image Descriptor section")
+			raise Exception("_parseImageDescriptor: File not at Image Descriptor section")
 			return
 		
 		# Parse out the fields
@@ -273,7 +273,7 @@ class gif:
 		if localColorTable:
 			# Skip it for now
 			self.gif = self.gif[sizeLocalColorTable * 3:]
-			print("Skipping local color table parsing for now")
+			#print("Skipping local color table parsing for now")
 			#raise Exception("_parseImageDescriptor: No support currently for local color tables")
 		
 		# Not really parsing the data for now. Looping through it

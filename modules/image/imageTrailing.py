@@ -3,6 +3,22 @@ from struct import unpack
 
 # Look for trailing data in images
 
+def gif(f,args):
+	from gif import gif
+	
+	# Load up the gif
+	g = gif(fileName=f.filename)
+	
+	# Parse it
+	g.parse()
+	
+	# Check for excess info
+	if len(g.gif) > 0:
+		print("Discovered trailing data: {0}".format(g.gif))
+		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+			outFile.write(g.gif)
+
+
 def png(f,args):
 	import png
 	
@@ -172,14 +188,14 @@ def auto(f,args):
 	try:
 		if f.format == "JPEG":
 			jpeg(f,args)
-			return
 		elif f.format == "TIFF":
 			tiff(f,args)
-			return
 		elif f.format == "PNG":
 			png(f,args)
 		elif f.format == "BMP":
 			bmp(f,args)
+		elif f.format == "GIF":
+			gif(f,args)
 		else:
 			print("Image Trailing: No support yet for format {0}".format(f.format))
 			return
