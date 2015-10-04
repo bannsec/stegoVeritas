@@ -247,6 +247,47 @@ class gif:
 			# We should stop parsing at this point since we don't know how to continue
 			raise Exception("_parseApplicationExtension: Unknown Application Extension \"{0}\"".format((appID + appAuthCode).decode('ascii')))
 
+	def _parseImageDescriptor(self):
+		"""
+		Input: None
+		Action:
+			Parse the image descriptor section of the gif
+		Returns: None
+		"""
+		
+		# Sanity check
+		if self.gif[0] != ord(","):
+			print("_parseImageDescriptor: File not at Image Descriptor section")
+			return
+		
+		# Parse out the fields
+		leftPos,rightPos,imWidth,imHeight,packed = unpack("<HHHHB",self.gif[1:10])
+		
+		localColorTable = bool(packed & 0b10000000 >> 7)
+		sizeLocalColorTable = 2 ** ((packed & 0b00000111)+1)
+		
+		# Update gif
+		self.gif = self.gif[10:]
+
+		# Need extra parsing if this frame is using a local color table
+		if localColorTable:
+			# Skip it for now
+			self.gif = self.gif[sizeLocalColorTable * 3:]
+			print("Skipping local color table parsing for now")
+			#raise Exception("_parseImageDescriptor: No support currently for local color tables")
+		
+		# Not really parsing the data for now. Looping through it
+		lzwMinCodeSize = self.gif[0]
+		length = self.gif[1]
+		self.gif = self.gif[length+2:]
+		
+		# Loop through all the sub blocks
+		while length > 0:
+			length = self.gif[0]
+			self.gif = self.gif[length+1:]
+		
+
+
 	def parse(self):
 		"""
 		Input: None
@@ -271,7 +312,14 @@ class gif:
 			# Are we looking at an extention block?
 			if self.gif[0] == ord("!"):
 				self._parseExtensionBlock()
-			else:
-				print("Unknown identifier: {0}".format(self.gif[0]))
+			# Image Descriptor
+			elif self.gif[0] == ord(","):
+				self._parseImageDescriptor()
+			# Descriptor telling us we're done parsing
+			elif self.gif[0] == ord(";"):
+				self.gif = self.gif[1:]
 				return
+			# Something went wrong
+			else:
+				raise Exception("Unknown identifier: {0}".format(self.gif[0]))
 
