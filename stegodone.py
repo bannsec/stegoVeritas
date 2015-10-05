@@ -55,6 +55,7 @@ parser.add_argument('-red',nargs='+',metavar='index',type=int)
 parser.add_argument('-green',nargs='+',metavar='index',type=int)
 parser.add_argument('-blue',nargs='+',metavar='index',type=int)
 parser.add_argument('-alpha',nargs='+',metavar='index',type=int)
+parser.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
 
 args = parser.parse_args()
 fileName = args.fileName[0]

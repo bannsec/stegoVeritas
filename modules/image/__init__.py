@@ -1,6 +1,7 @@
 import modules.image.imageLSB
 import modules.image.imageFilters
 import modules.image.imageMeta
+import modules.image.imageTrailing
 import os.path
 import sys
 
@@ -18,7 +19,11 @@ def autoAnalysis(f,args):
 	# Check metadata
 	print("Checking Meta Data\n")
 	modules.image.imageMeta.auto(f,args)	
-
+	
+	# Check for trailing data
+	print("Checking for trailing data")
+	modules.image.imageTrailing.auto(f,args)
+	
 	# Run the filers on it
 	print("Running image filters")
 	modules.image.imageFilters.auto(f,args.outDir)
@@ -112,4 +117,5 @@ def run(fArray,args):
 	if args.meta:
 		modules.image.imageMeta.auto(f,args)
 
-
+	if args.trailing:
+		modules.image.imageTrailing.auto(f,args)
