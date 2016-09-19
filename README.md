@@ -1,16 +1,16 @@
-# StegoDone
+# StegoVeritas
 Yet another Stego Tool
 
 # Quick Start
-StegoDone has default actions for most image types (gif,jpeg,png,tiff,bmp)
+StegoVeritas has default actions for most image types (gif,jpeg,png,tiff,bmp)
 
-`stegodone.py <file>`
+`stegoveritas.py <file>`
 
 If you want to do something specific, you can check out the help:
 
 ```
-stegodone.py -h
-usage: stegodone.py [-h] [-outDir dir] [-meta] [-imageTransform] [-bruteLSB]
+stegoveritas.py -h
+usage: stegoveritas.py [-h] [-outDir dir] [-meta] [-imageTransform] [-bruteLSB]
                     [-colorMap [N [N ...]]] [-colorMapRange Start End]
                     [-extractLSB] [-red index [index ...]]
                     [-green index [index ...]] [-blue index [index ...]]

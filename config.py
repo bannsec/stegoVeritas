@@ -6,7 +6,7 @@ SCRIPTDIR = os.path.dirname(os.path.realpath(__file__))
 # Get the current dir
 PWD = os.getcwd()
 
-TEMPFILE = os.path.join(SCRIPTDIR,"stegodone.temp")
+TEMPFILE = os.path.join(SCRIPTDIR,"stegoveritas.temp")
 # TODO: Use python to make this dynamic
 RESULTSDIR = os.path.join(PWD,"results")
 

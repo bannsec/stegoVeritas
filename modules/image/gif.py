@@ -5,7 +5,7 @@ class gif:
 	"""
 	GIF Parser written completely in Python3
 	Owner/Copyright: Michael Bann 2015 (bannsecurity.com)
-	Originally designed for StegoDone tool (https://github.com/Owlz/StegoDone)
+	Originally designed for StegoVeritas tool (https://github.com/Owlz/stegoVeritas)
 	"""
 	
 	# http://www.w3.org/Graphics/GIF/spec-gif89a.txt
