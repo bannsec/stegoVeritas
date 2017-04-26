@@ -3,6 +3,7 @@ import subprocess
 import os
 import shutil
 import time
+import magic
 
 def testOutput(b,args):
         """
@@ -16,6 +17,20 @@ def testOutput(b,args):
                 Nothing. Move output into keep directory if it's worth-while    
         """
 
+        # TODO: Test new logic...
+        # TODO: Iterate through binary offset to find buried data
+
+        m = magic.from_buffer(b,mime=True)
+
+        # Generic Output
+        if m != 'application/octet-stream':
+            m = magic.from_buffer(b,mime=False)
+            print("Found something worth keeping!\n{0}".format(m))
+            # Save it to disk
+            with open(os.path.join(args.outDir,str(time.time())), "wb") as f:
+                f.write(b)
+
+        """
         # Write out the buffer  
         temp = open(TEMPFILE,"wb")
         temp.write(b)
@@ -34,6 +49,7 @@ def testOutput(b,args):
                 os.unlink(TEMPFILE)
         except OSError:
                 pass
+        """
 
 
 # Change this to a primitive to dump any given index of a given color
