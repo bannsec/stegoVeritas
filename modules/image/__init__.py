@@ -66,7 +66,7 @@ def extractLSB(f,args):
 
 	print("Extracting ({0},{1},{2},{3})".format(r,g,b,a))
 
-	o = modules.image.imageLSB._dumpLSBRGBA(f=f,rIndex=r,gIndex=g,bIndex=a,aIndex=a)
+	o = modules.image.imageLSB._dumpLSBRGBA(f=f,rIndex=r,gIndex=g,bIndex=b,aIndex=a)
 	f = open(os.path.join(args.outDir,"LSBExtracted.bin"),"wb")
 	f.write(o)
 	f.close()
