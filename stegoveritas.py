@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # TODO: Implement multi-threading pool: https://docs.python.org/3/library/concurrent.futures.html
 
