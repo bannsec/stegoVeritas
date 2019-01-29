@@ -2,11 +2,6 @@
 import logging
 logger = logging.getLogger('StegoVeritas:Modules')
 
-"""
-import handler
-handlers = [handler]
-"""
-
 class ModuleBase(object):
     """Define things that need to be in the module class."""
 
@@ -28,9 +23,6 @@ class ModuleBase(object):
 
     @veritas.setter
     def veritas(self, veritas):
-        if not isinstance(veritas, StegoVeritas):
-            logger.error('Invalid veritas class! Got: {}'.format(type(veritas)))
-
         self.__veritas = veritas
 
     @property
@@ -43,12 +35,25 @@ class ModuleBase(object):
         assert type(valid) is bool, 'Unexpected type for valid of {}'.format(type(valid))
         self.__valid = valid
 
-def iter_modules(file_path):
+    @property
+    def description(self) -> str:
+        """str: Description of things we know about this file."""
+        return 'This hasn\'t been implemented yet.'
+
+def iter_modules(veritas):
     """Iterate through handlers until one of them loads correctly or we run out of handlers.
 
     Returns:
         Valid handler instantiation or None.
     """
-    pass
 
-from .. import StegoVeritas
+    for module in modules:
+        instance = module(veritas)
+        
+        if instance.valid:
+            yield instance
+
+from .image import SVImage
+
+# List of classes of modules to try
+modules =  [ SVImage ]

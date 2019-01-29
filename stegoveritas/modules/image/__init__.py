@@ -1,9 +1,41 @@
-import modules.image.imageLSB
-import modules.image.imageFilters
-import modules.image.imageMeta
-import modules.image.imageTrailing
+
+import logging
+logger = logging.getLogger('StegoVeritas:Modules:Image')
+
 import os.path
 import sys
+from PIL import Image
+
+from .. import ModuleBase
+
+class SVImage(ModuleBase):
+
+    def __init__(self, veritas):
+        super().__init__(veritas)
+
+        # Can we handle this file?
+        try:
+            self.file = Image.open(veritas.file_name)
+            self.valid = True
+
+        except:
+            self.valid = False
+            logger.info('Cannot handle this file type.')
+            return
+
+
+    def run(self):
+        print('Passing on this.')
+        pass
+    
+    @property
+    def file(self):
+        """PIL Image Instantiation."""
+        return self.__file
+
+    @file.setter
+    def file(self, file):
+        self.__file = file
 
 def autoAnalysis(f,args):
 	"""
@@ -119,3 +151,5 @@ def run(fArray,args):
 
 	if args.trailing:
 		modules.image.imageTrailing.auto(f,args)
+
+#from . import imageLSB, imageFilters, imageMeta, imageTrailing

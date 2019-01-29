@@ -7,7 +7,6 @@ logger = logging.getLogger('StegoVeritas')
 
 # TODO: Implement multi-threading pool: https://docs.python.org/3/library/concurrent.futures.html
 
-from PIL import Image
 import binascii
 import os, os.path
 import argparse
@@ -25,23 +24,7 @@ class StegoVeritas(object):
         #self._preflight()
         self._parse_args(args)
 
-    def openFile(fileName):
-            """
-            Input:
-                    fileName == name of file to open
-            Action:
-                    Attempt to open fileName in various ways to determine proper handler
-            Returns:
-                    (fType,[f]) where fType is in ["Image"], and [f] contains the details of the opened file
-                    The values returned here will be dependent on the type of file identified
-            """
-            
-            try:
-                    f = Image.open(fileName)
-                    return ("Image",[f])
-            except:
-                    print("Error: Unknown or unsupported file type")
-                    exit(1)
+        self.modules = []
 
 
     def printFileInformation(fType,x):
@@ -92,6 +75,15 @@ class StegoVeritas(object):
             modules.image.run(fArray,args)
 
         """
+
+    def run(self):
+        """Run analysis on the file."""
+        for module in modules.iter_modules(self):
+            print('Running Module: ' + module.__class__.__name__)
+            print(module.description)
+            module.run()
+            self.modules.append(module)
+
     
     ##############
     # Properties #
@@ -130,9 +122,21 @@ class StegoVeritas(object):
         logger.info('Results Directory: ' + full_path)
         self.__results_directory = results_directory
 
+    @property
+    def modules(self) -> list:
+        """list: List of all modules that have been run. NOTE: This will only be populated AFTER 'run' has been called and the modules themselves have been run."""
+        return self.__modules
 
-def main():
-    StegoVeritas()
+    @modules.setter
+    def modules(self, modules):
+        self.__modules = modules
+
+
+def main(args=None):
+    veritas = StegoVeritas(args=args)
+    veritas.run()
+
+from . import modules
 
 if __name__ == '__main__':
     main()
