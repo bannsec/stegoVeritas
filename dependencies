@@ -1,2 +1,0 @@
-sudo apt-get install python3-pillow python3-numpy
-sudo pip3 install pfp python-magic
