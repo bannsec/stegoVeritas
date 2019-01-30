@@ -26,7 +26,7 @@ class SVImage(ModuleBase):
 
     # Change this to a primitive to dump any given index of a given color
     # Then, handle the weaving of those together in a different function
-    def dumpLSBRGBA(red_index = [],green_index = [],blue_index = [],alpha_index = []):
+    def dumpLSBRGBA(self, red_index = [],green_index = [],blue_index = [],alpha_index = []):
         """
         Input: 
                 red_index, green_index, blue_index, alpha_index as array of integer indexes (up to 8) to dump

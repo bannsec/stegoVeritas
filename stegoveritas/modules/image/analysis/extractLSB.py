@@ -2,6 +2,8 @@
 import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:ExtractLSB')
 
+import os
+
 
 def run(image):
     """Extracts byte stream of Least Significant Bits.
@@ -44,10 +46,9 @@ def run(image):
 
     print("Extracting ({0},{1},{2},{3})".format(r,g,b,a))
 
-    o = image.dumpLSBRGBA(f=f,rIndex=r,gIndex=g,bIndex=b,aIndex=a)
-    f = open(os.path.join(args.outDir,"LSBExtracted.bin"),"wb")
-    f.write(o)
-    f.close()
+    extract_location = os.path.join(image.veritas.results_directory,"LSBExtracted.bin")
+    o = image.dumpLSBRGBA(red_index=r,green_index=g,blue_index=b,alpha_index=a)
+    with open(extract_location,"wb") as f:
+        f.write(o)
 
-    print("Extracted to {0}".format(os.path.join(args.outDir,"LSBExtracted.bin")))
-    return
+    print("Extracted to {0}".format(extract_location))
