@@ -31,7 +31,7 @@ setup(
     ],
     keywords='steg stego steganography stegoveritas',
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'dist']),
-    install_requires=['pillow', 'numpy', 'pfp', 'python-magic'],
+    install_requires=['pillow', 'numpy', 'pfp', 'python-magic', 'prettytable'],
     extras_require={
         'dev': ['six==1.10.0','ipython','twine','pytest','python-coveralls','coverage','pytest-cov','pytest-xdist','sphinxcontrib-napoleon', 'sphinx_rtd_theme','sphinx-autodoc-typehints', 'pyOpenSSL'],
     },

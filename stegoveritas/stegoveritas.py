@@ -23,19 +23,7 @@ class StegoVeritas(object):
         
         #self._preflight()
         self._parse_args(args)
-
         self.modules = []
-
-
-    def printFileInformation(fType,x):
-            if fType == "Image":
-                    x = x[0]
-                    print("Type:\t{0}".format(x.format_description))
-                    print("Mode:\t{0}\n".format("ColorMap" if x.mode == "P" else x.mode))
-                    return
-            else:
-                    print("Error... Cannot determine file type")
-                    return
 
     def _parse_args(self, args=None):
 

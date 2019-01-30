@@ -5,6 +5,7 @@ logger = logging.getLogger('StegoVeritas:Modules:Image')
 import os.path
 import sys
 from PIL import Image
+from prettytable import PrettyTable
 
 from .. import ModuleBase
 
@@ -23,10 +24,62 @@ class SVImage(ModuleBase):
             logger.info('Cannot handle this file type.')
             return
 
+    # Change this to a primitive to dump any given index of a given color
+    # Then, handle the weaving of those together in a different function
+    def dumpLSBRGBA(red_index = [],green_index = [],blue_index = [],alpha_index = []):
+        """
+        Input: 
+                red_index, green_index, blue_index, alpha_index as array of integer indexes (up to 8) to dump
+                ex: [0],None,None would dump only the least significant bit of the Red field
+        Action:
+                Creates a byte array containing the output of the LSB dump (RGBA order) requested
+                If needed, it will use the least significant bit first, then bit plane order of red->green->blue->alpha
+        Returns:
+                Byte array of the result of the action
+                ex: b'\x01\x02\x03\x04' etc
+        """
 
-    def run(self):
-        print('Passing on this.')
-        pass
+
+        ##################
+        # Combine Output #
+        ##################
+        # We'll be keeping the binary string here
+        binStr = ''
+
+        # Figure out valid index ranges
+        indexes = list(set(red_index + green_index + blue_index + alpha_index))
+        indexes.sort()
+
+        # Figure out what we have to work with
+        bands = self.file.getbands()
+
+        # Get the image bytes
+        fBytes = self.file.tobytes()
+
+        # TODO: The following assumes an ordering of RGBA. If this is ever not the case, things will get mixed up
+        # Loop through all the bytes of the image
+        for byte in range(0,self.file.size[0] * self.file.size[1] * len(bands),len(bands)):
+                # Loop through all the possible desired indexes
+                for index in indexes:
+                        # If this is a value we're extracting
+                        if index in red_index:
+                                binStr += str(fBytes[byte + 0] >> index & 1)
+                        if index in green_index:
+                                binStr += str(fBytes[byte + 1] >> index & 1)
+                        if index in blue_index:
+                                binStr += str(fBytes[byte + 2] >> index & 1)
+                        if index in alpha_index:
+                                binStr += str(fBytes[byte + 3] >> index & 1)
+
+        # Parse those into bytes
+        bArray = []
+        for i in range(0,len(binStr),8):
+                bArray.append(int(binStr[i:i+8],2))
+
+        # Change bytes into a bit array for writing
+        bits = ''.join([chr(b) for b in bArray]).encode('iso-8859-1')
+
+        return bits
     
     @property
     def file(self):
@@ -36,6 +89,12 @@ class SVImage(ModuleBase):
     @file.setter
     def file(self, file):
         self.__file = file
+
+    @property
+    def description(self):
+        table = PrettyTable(['Image Format', 'Mode'])
+        table.add_row([self.file.format_description, 'ColorMap' if self.file.mode == 'P' else self.file.mode])
+        return str(table)
 
 def autoAnalysis(f,args):
 	"""
@@ -69,44 +128,6 @@ def autoAnalysis(f,args):
 	modules.image.imageLSB.auto(f,args)
 	
 	
-
-def extractLSB(f,args):
-	"""
-	Input:
-		args -- The parsed list of program arguments
-	Action:
-		Extract LSB for given arguments. Save to RESULTSDIR/LSBExtracted.bin
-	Returns:
-		Nothing
-	"""
-	if args.red:
-		r = args.red
-	else:
-		r = []
-	if args.green:
-		g = args.green
-	else:
-		g = []
-	if args.blue:
-		b = args.blue
-	else:
-		b = []
-	if args.alpha:
-		a = args.alpha
-	else:
-		a = []
-
-	print("Extracting ({0},{1},{2},{3})".format(r,g,b,a))
-
-	o = modules.image.imageLSB._dumpLSBRGBA(f=f,rIndex=r,gIndex=g,bIndex=b,aIndex=a)
-	f = open(os.path.join(args.outDir,"LSBExtracted.bin"),"wb")
-	f.write(o)
-	f.close()
-
-	print("Extracted to {0}".format(os.path.join(args.outDir,"LSBExtracted.bin")))
-	return
-
-
 def run(fArray,args):
 	"""
 	Primary handler for Image type stego

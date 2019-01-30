@@ -2,6 +2,10 @@
 import logging
 logger = logging.getLogger('StegoVeritas:Modules')
 
+import importlib
+import inspect
+import os
+
 class ModuleBase(object):
     """Define things that need to be in the module class."""
 
@@ -14,8 +18,17 @@ class ModuleBase(object):
         self.valid = False
 
     def run(self):
-        """Must implement this. This will be called to perform the analysis."""
-        raise NotImplementedError('This call is not implemented!')
+        """By default, this will dynamically load any python files under the 'analysis' subfolder and call the 'run' method with itself as the only argument."""
+
+        # List out the analysis modules
+        module = str(self.__class__.__module__)
+        analysis_dir = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), 'analysis')
+        _,_,files = next(os.walk(analysis_dir))
+
+        for f in files:
+            if f.endswith('.py') and f != '__init__.py':
+                module = importlib.import_module('.analysis.' + f[:-3], module)
+                module.run(self)
 
     @property
     def veritas(self):

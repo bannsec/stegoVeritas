@@ -52,63 +52,6 @@ def testOutput(b,args):
         """
 
 
-# Change this to a primitive to dump any given index of a given color
-# Then, handle the weaving of those together in a different function
-def _dumpLSBRGBA(f,rIndex = [],gIndex = [],bIndex = [],aIndex = []):
-        """
-        Input: 
-                rIndex, gIndex, bIndex, aIndex as array of integer indexes (up to 8) to dump
-                ex: [0],None,None would dump only the least significant bit of the Red field
-        Action:
-                Creates a byte array containing the output of the LSB dump (RGBA order) requested
-                If needed, it will use the least significant bit first, then bit plane order of red->green->blue->alpha
-        Returns:
-                Byte array of the result of the action
-                ex: b'\x01\x02\x03\x04' etc
-        """
-
-        ##################
-        # Combine Output #
-        ##################
-        # We'll be keeping the binary string here
-        binStr = ''
-
-        # Figure out valid index ranges
-        indexes = list(set(rIndex + gIndex + bIndex + aIndex))
-        indexes.sort()
-
-        # Figure out what we have to work with
-        bands = f.getbands()
-
-        # Get the image bytes
-        fBytes = f.tobytes()
-
-        # TODO: The following assumes an ordering of RGBA. If this is ever not the case, things will get mixed up
-        # Loop through all the bytes of the image
-        for byte in range(0,f.size[0] * f.size[1] * len(bands),len(bands)):
-                # Loop through all the possible desired indexes
-                for index in indexes:
-                        # If this is a value we're extracting
-                        if index in rIndex:
-                                binStr += str(fBytes[byte + 0] >> index & 1)
-                        if index in gIndex:
-                                binStr += str(fBytes[byte + 1] >> index & 1)
-                        if index in bIndex:
-                                binStr += str(fBytes[byte + 2] >> index & 1)
-                        if index in aIndex:
-                                binStr += str(fBytes[byte + 3] >> index & 1)
-
-        # Parse those into bytes
-        bArray = []
-        for i in range(0,len(binStr),8):
-                bArray.append(int(binStr[i:i+8],2))
-
-        # Change bytes into a bit array for writing
-        bits = ''.join([chr(b) for b in bArray]).encode('iso-8859-1')
-
-        return bits
-
-
 def _dumpLSB(img,index):
         """
         Mostly obsolete since extraction method changed
