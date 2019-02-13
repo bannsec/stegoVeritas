@@ -7,7 +7,9 @@ import os, sys, ast
 here = os.path.abspath(os.path.dirname(__file__))
 long_description = "See website for more info."
 
-from stegoveritas.version import version
+# Importing during setup causes dependency issues
+with open('stegoveritas/version.py') as f:
+    exec(f.read())
 
 # TODO: Get 'six' package up to newest version. Right now py010parser is forcing it to 1.10.0, which isn't great.
 # https://github.com/d0c-s4vage/py010parser/pull/19
