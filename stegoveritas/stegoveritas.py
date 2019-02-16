@@ -27,7 +27,8 @@ class StegoVeritas(object):
 
     def _parse_args(self, args=None):
 
-        parser = argparse.ArgumentParser(description='Yet another Stego tool')
+        parser = argparse.ArgumentParser(description='Yet another Stego tool',
+                epilog = 'Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
         parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
         parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
         parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')

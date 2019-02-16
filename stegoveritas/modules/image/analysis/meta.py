@@ -1,11 +1,39 @@
-import os.path
-import sys
-from config import SCRIPTDIR
+
+import logging
+logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Meta')
+
+import os
 from struct import unpack
-
-sys.path.append(os.path.join(SCRIPTDIR,"modules","image"))
-
 import exifread
+from .. import png
+
+def run(image):
+    """Extracts meta data from the image.
+
+    Args:
+        image: SVImage class instance
+
+    Returns:
+        None
+
+    Saves the result to RESULTSDIR/metadata
+    """
+
+    args = image.veritas.args
+
+    # Nothing to do
+    if not image._default_run and not args.meta:
+        logger.debug('Nothing to do.')
+        return
+
+    if image.file.format == "JPEG" or image.file.format == "TIFF":
+            JPEGMeta(image)
+
+    elif image.file.format == "PNG":
+            PNGMeta(image)
+
+    else:
+            print("No metadata parsing support for {0}".format(image.file.format))
 
 def parsePNGChunk(t,c):
 	"""
@@ -65,11 +93,11 @@ def parsePNGChunk(t,c):
 		return ""
 	return ""
 
-def JPEGMeta(f,args):
+def JPEGMeta(image):
 	meta = ""
-	
+
 	# Open up the file for reading
-	with open(f.filename,"rb") as jpegFile:
+	with open(image.veritas.file_name,"rb") as jpegFile:
 		tags = exifread.process_file(jpegFile)
 		
 		for tag in tags:
@@ -79,36 +107,16 @@ def JPEGMeta(f,args):
 	print("Exif Data\n=========\n{0}\n".format(meta))
 	
 	# Save it off
-	with open(os.path.join(args.outDir,"metadata"),"w") as out:
+	with open(os.path.join(image.veritas.results_directory,"metadata"),"w") as out:
 		out.write(meta)
 	
 
-def PNGMeta(f,args):
-	import png
+def PNGMeta(image):
 	
-	r = png.Reader(filename=f.filename)
+	r = png.Reader(filename=image.veritas.file_name)
 	
 	for chunk in r.chunks():
 		tmp = parsePNGChunk(chunk[0],chunk[1])
 		if tmp != "":
 			print(tmp)
 
-
-def auto(f,args):
-	"""
-	Input:
-		f -- PIL Image object
-		args -- argparser object
-	Action:
-		Determine appropriate metadata parser, and parse data
-	Returns:
-		Nothing
-	"""
-	
-	# JPEG and TIFF Metadata
-	if f.format == "JPEG" or f.format == "TIFF":
-		JPEGMeta(f,args)
-	elif f.format == "PNG":
-		PNGMeta(f,args)
-	else:
-		print("No metadata parsing support for {0}".format(f.format))

@@ -21,13 +21,13 @@ class ModuleBase(object):
         """By default, this will dynamically load any python files under the 'analysis' subfolder and call the 'run' method with itself as the only argument."""
 
         # List out the analysis modules
-        module = str(self.__class__.__module__)
+        module_base = str(self.__class__.__module__)
         analysis_dir = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), 'analysis')
         _,_,files = next(os.walk(analysis_dir))
 
         for f in files:
             if f.endswith('.py') and f != '__init__.py':
-                module = importlib.import_module('.analysis.' + f[:-3], module)
+                module = importlib.import_module('.analysis.' + f[:-3], module_base)
                 module.run(self)
 
     @property
