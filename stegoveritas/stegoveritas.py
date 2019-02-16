@@ -11,6 +11,9 @@ import argparse
 from .config import *
 from .version import version
 
+import magic
+import time
+
 class StegoVeritas(object):
 
     def __init__(self, args=None):
@@ -57,6 +60,36 @@ class StegoVeritas(object):
             print(module.description)
             module.run()
             self.modules.append(module)
+
+    def test_output(self, thing):
+            """
+            Args:
+                thing (bytes): Renerally from the dump functions
+                    ex: thing = b'\x01\x02\x03'
+
+            Returns:
+                Nothing. Move output into keep directory if it's worth-while    
+
+            
+            Test if output is worth keeping. If it is, move it into the results directory.
+            Initially, this is using the Unix file command on the output and checking for non "Data" returns
+            """
+            
+            assert type(thing) == bytes, 'test_output got unexpected thing type of {}'.format(type(thing))
+
+            # TODO: Test new logic...
+            # TODO: Iterate through binary offset to find buried data
+
+            m = magic.from_buffer(thing,mime=True)
+
+            # Generic Output
+            if m != 'application/octet-stream':
+                m = magic.from_buffer(thing,mime=False)
+                print("Found something worth keeping!\n{0}".format(m))
+                # Save it to disk
+                # TODO: Minor race condition here if we end up multi-processing
+                with open(os.path.join(self.results_directory, str(time.time())), "wb") as f:
+                    f.write(thing)
 
     
     ##############
