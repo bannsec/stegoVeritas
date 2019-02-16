@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from . import Colorer
+
 import logging
 logging.basicConfig(level=logging.WARN)
 
@@ -13,6 +15,9 @@ from .version import version
 
 import magic
 import time
+import shutil
+
+from .install_deps import required_packages
 
 class StegoVeritas(object):
 
@@ -22,36 +27,10 @@ class StegoVeritas(object):
             args (list, optional): Arguments as if you passed them via the command line (i.e.: ['-out','directory','-meta'])
         """
         
-        #self._preflight()
+        self._preflight()
         self._parse_args(args)
         self.modules = []
 
-    def _parse_args(self, args=None):
-
-        parser = argparse.ArgumentParser(description='Yet another Stego tool',
-                epilog = 'Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
-        parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
-        parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
-        parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
-        parser.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
-        parser.add_argument('-colorMap',nargs="*",metavar='N',type=int,help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
-        parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int,help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
-        parser.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
-        parser.add_argument('-red',nargs='+',metavar='index',type=int)
-        parser.add_argument('-green',nargs='+',metavar='index',type=int)
-        parser.add_argument('-blue',nargs='+',metavar='index',type=int)
-        parser.add_argument('-alpha',nargs='+',metavar='index',type=int)
-        parser.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
-        parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
-        parser.add_argument('file_name',metavar='file',type=str, default=False, help='The file to analyze')
-
-        self.args = parser.parse_args(args)
-
-        if self.args.debug:
-            logging.root.setLevel(logging.DEBUG)
-
-        self.file_name = self.args.file_name
-        self.results_directory = self.args.out
 
     def run(self):
         """Run analysis on the file."""
@@ -91,6 +70,45 @@ class StegoVeritas(object):
                 with open(os.path.join(self.results_directory, str(time.time())), "wb") as f:
                     f.write(thing)
 
+    def _preflight(self):
+        """Checks for missing requirements."""
+        
+        missing_packages = []
+
+        for package in required_packages:
+            if shutil.which(package) is None:
+                missing_packages.append(package)
+
+        if missing_packages != []:
+            logger.error('Missing the following required packages: ' + ', '.join(missing_packages))
+            logger.error('Either install them manually or run \'stegoveritas_install_deps\'.')
+
+    def _parse_args(self, args=None):
+
+        parser = argparse.ArgumentParser(description='Yet another Stego tool',
+                epilog = 'Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
+        parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
+        parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
+        parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
+        parser.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
+        parser.add_argument('-colorMap',nargs="*",metavar='N',type=int,help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
+        parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int,help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
+        parser.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
+        parser.add_argument('-red',nargs='+',metavar='index',type=int)
+        parser.add_argument('-green',nargs='+',metavar='index',type=int)
+        parser.add_argument('-blue',nargs='+',metavar='index',type=int)
+        parser.add_argument('-alpha',nargs='+',metavar='index',type=int)
+        parser.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
+        parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
+        parser.add_argument('file_name',metavar='file',type=str, default=False, help='The file to analyze')
+
+        self.args = parser.parse_args(args)
+
+        if self.args.debug:
+            logging.root.setLevel(logging.DEBUG)
+
+        self.file_name = self.args.file_name
+        self.results_directory = self.args.out
     
     ##############
     # Properties #

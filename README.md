@@ -2,6 +2,12 @@
 Yet another Stego Tool
 
 # Quick Start
+## Install
+```bash
+pip3 install stegoveritas
+```
+
+## Running
 StegoVeritas has default actions for most image types (gif,jpeg,png,tiff,bmp)
 
 `stegoveritas.py <file>`

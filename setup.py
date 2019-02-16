@@ -40,6 +40,7 @@ setup(
     entry_points={
         'console_scripts': [
             'stegoveritas = stegoveritas.stegoveritas:main',
+            'stegoveritas_install_deps = stegoveritas.install_deps:main',
         ],
     },
 )
