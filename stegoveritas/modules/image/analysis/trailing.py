@@ -5,7 +5,7 @@ logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Trailing')
 import os
 from struct import unpack
 from .. import png
-from ..gif import gif
+from ..gif import gif as gif_module
 
 def run(image):
     """Extracts trailing data from the image.
@@ -50,7 +50,7 @@ def run(image):
 def gif(image):
 	
 	# Load up the gif
-	g = gif(fileName=image.veritas.file_name)
+	g = gif_module(fileName=image.veritas.file_name)
 	
 	# Parse it
 	g.parse()
