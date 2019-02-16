@@ -1,13 +1,56 @@
-import os.path
+
+import logging
+logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Trailing')
+
+import os
 from struct import unpack
+from .. import png
+from ..gif import gif
 
-# Look for trailing data in images
+def run(image):
+    """Extracts trailing data from the image.
 
-def gif(f,args):
-	from gif import gif
+    Args:
+        image: SVImage class instance
+
+    Returns:
+        None
+
+    Saves the result to RESULTSDIR/trailing_data.bin
+    """
+
+    global output_file
+    output_file = os.path.join(image.veritas.results_directory, "trailing_data.bin")
+
+    args = image.veritas.args
+
+    # Nothing to do
+    if not image._default_run and not args.trailing:
+        logger.debug('Nothing to do.')
+        return
+
+    try:
+        if image.file.format == "JPEG":
+            jpeg(image)
+        elif image.file.format == "TIFF":
+            tiff(image)
+        elif image.file.format == "PNG":
+            png(image)
+        elif image.file.format == "BMP":
+            bmp(image)
+        elif image.file.format == "GIF":
+            gif(image)
+        else:
+            print("Image Trailing: No support yet for format {0}".format(image.file.format))
+            return
+    except Exception as e:
+        print("Image Trailing: Something went wrong... please submit a bug report. Error: {}".format(e))
+
+
+def gif(image):
 	
 	# Load up the gif
-	g = gif(fileName=f.filename)
+	g = gif(fileName=image.veritas.file_name)
 	
 	# Parse it
 	g.parse()
@@ -15,49 +58,38 @@ def gif(f,args):
 	# Check for excess info
 	if len(g.gif) > 0:
 		print("Discovered trailing data: {0}".format(g.gif))
-		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+		with open(output_file, "wb") as outFile:
 			outFile.write(g.gif)
 
 
-def png(f,args):
-	import png
-	
-	pngFile = open(f.filename,"rb").read()
+def png(image):
+	pngFile = open(image.veritas.file_name,"rb").read()
 	
 	# TODO: This isn't 100% accurate. Rework to follow tags correctly.
 	pngFile = pngFile.split(b"IEND")[1][4:]
 	
 	if len(pngFile) != 0:
 		print("Discovered Trailing Data:\n{0}".format(pngFile))
-		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+		with open(output_file,"wb") as outFile:
 			outFile.write(pngFile)
 
 
-def bmp(f,args):
+def bmp(image):
 	# This one is pretty easy
-	myBMP = open(f.filename,"rb").read()
+	myBMP = open(image.veritas.file_name,"rb").read()
 	
 	size = unpack("<I",myBMP[2:6])[0]
 	
 	if len(myBMP[size:]) != 0:
 		print("Discovered Trailing Data:\n{0}".format(myBMP[size:]))
-		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+		with open(output_file,"wb") as outFile:
 			outFile.write(myBMP[size:])
 
 
-def tiff(f,args):
-	"""
-	Input:
-		f -- PIL Image file
-		args -- arg parsed arguments
-	Action:
-		Checks for trailing information in file. Print and save if found.
-	Returns:
-		Nothing
-	"""
+def tiff(image):
 	
 	# Read in the file
-	with open(f.filename,"rb") as myFile:
+	with open(image.veritas.file_name,"rb") as myFile:
 		steg = myFile.read()
 	
 	# Parse magic
@@ -105,20 +137,11 @@ def tiff(f,args):
 	if len(steg) > maxAddr:
 		print("Trailing Data Discovered... Saving")
 		print(steg[maxAddr:])
-		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+		with open(output_file,"wb") as outFile:
 			outFile.write(steg[maxAddr:])
 
 
-def jpeg(f,args):
-	"""
-	Input:
-		f -- PIL Image file
-		args -- arg parsed arguments
-	Action:
-		Checks for trailing information in file. Print and save if found.
-	Returns:
-		Nothing
-	"""
+def jpeg(image):
 
 	# Official specs here: http://www.w3.org/Graphics/JPEG/itu-t81.pdf	
 
@@ -129,7 +152,7 @@ def jpeg(f,args):
 	nonLenMarkers = [ b'\xff\xd8', b'\xff\x01', b'\xffd0', b'\xffd1', b'\xffd2', b'\xffd3', b'\xffd4', b'\xffd5', b'\xffd6', b'\xffd7' ]
 
 	# Open up the file
-	with open(f.filename,"rb") as myFile:
+	with open(image.veritas.file_name,"rb") as myFile:
 		steg = myFile.read()
 	
 	while True:
@@ -171,33 +194,5 @@ def jpeg(f,args):
 		print("Trailing Data Discovered... Saving")
 		print(steg[i:])
 		# Save it off for reference
-		with open(os.path.join(args.outDir,"trailing_data.bin"),"wb") as outFile:
+		with open(output_file, "wb") as outFile:
 			outFile.write(steg[i:])
-
-def auto(f,args):
-	"""
-	Input:
-		f -- PIL Image file
-		args -- arg parsed arguments
-	Action:
-		Based on file type, checks for trailing information in file. Print and save if found.
-	Returns:
-		Nothing
-	"""
-	
-	try:
-		if f.format == "JPEG":
-			jpeg(f,args)
-		elif f.format == "TIFF":
-			tiff(f,args)
-		elif f.format == "PNG":
-			png(f,args)
-		elif f.format == "BMP":
-			bmp(f,args)
-		elif f.format == "GIF":
-			gif(f,args)
-		else:
-			print("Image Trailing: No support yet for format {0}".format(f.format))
-			return
-	except:
-		print("Image Trailing: Something went wrong... please submit a bug report")

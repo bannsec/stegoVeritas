@@ -5,8 +5,6 @@ logging.basicConfig(level=logging.WARN)
 
 logger = logging.getLogger('StegoVeritas')
 
-# TODO: Implement multi-threading pool: https://docs.python.org/3/library/concurrent.futures.html
-
 import binascii
 import os, os.path
 import argparse
@@ -51,19 +49,6 @@ class StegoVeritas(object):
 
         self.file_name = self.args.file_name
         self.results_directory = self.args.out
-
-
-        """
-        fType,fArray = openFile(fileName)
-
-        printFileInformation(fType,fArray)
-        args.outDir = args.outDir[0]
-
-    if fType == "Image":
-            import modules.image
-            modules.image.run(fArray,args)
-
-        """
 
     def run(self):
         """Run analysis on the file."""
