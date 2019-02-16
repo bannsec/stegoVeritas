@@ -23,6 +23,13 @@ class SVImage(ModuleBase):
             self.valid = False
             logger.info('Cannot handle this file type.')
             return
+        
+        # Should we run all default plugins?
+        if all([not veritas.args.imageTransform, not veritas.args.extractLSB, not veritas.args.bruteLSB, not veritas.args.colorMap, not veritas.args.colorMapRange, not veritas.args.trailing, not veritas.args.meta]):
+            self._default_run = True
+        else:
+            self._default_run = False
+
 
     # Change this to a primitive to dump any given index of a given color
     # Then, handle the weaving of those together in a different function
