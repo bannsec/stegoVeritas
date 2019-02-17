@@ -7,8 +7,6 @@ RUN apt update && apt dist-upgrade -y && \
     useradd -m -s /bin/bash stegoveritas && \
     mkdir -p /opt
 
-# pip3 install -U pip setuptools
-
 COPY --chown=stegoveritas:stegoveritas . /opt/stegoveritas/
 
 RUN cd /opt/stegoveritas && pip3 install -e .[dev] && \
