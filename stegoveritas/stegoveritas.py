@@ -69,6 +69,8 @@ class StegoVeritas(object):
                 # TODO: Minor race condition here if we end up multi-processing
                 with open(os.path.join(self.results_directory, str(time.time())), "wb") as f:
                     f.write(thing)
+            
+            # TODO: Check if strings of output contain a known word, save if so.
 
     def _preflight(self):
         """Checks for missing requirements."""
