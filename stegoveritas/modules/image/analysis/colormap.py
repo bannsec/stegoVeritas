@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:ColorMap')
 
 import os
-from PIL import Image,ImageFilter
 import numpy
 from copy import copy
 
@@ -22,19 +21,30 @@ def run(image):
     args = image.veritas.args
 
     # Nothing to do
-    if not image._default_run and args.colorMap is None:
+    if not image._default_run and args.colorMap is None and args.colorMapRange is None:
         logger.debug('Nothing to do.')
         return
 
-    extract_colormap(image, [])
+    extract_colormap(image)
 
-def extract_colormap(image, saveMap=[]):
+def extract_colormap(image, saveMap=None):
 
     bands = image.file.getbands()
 
     if "P" not in bands:
         logger.debug('Not a colormap. Skipping.')
         return
+
+    if image.veritas.args.colorMap in [[], None]:
+        index_to_save = range(0x100)
+    else:
+        index_to_save = image.veritas.args.colorMap
+
+    if saveMap is None:
+        if image.veritas.args.colorMapRange is not None:
+            saveMap = range(*image.veritas.args.colorMapRange)
+        else:
+            saveMap = []
 
     logger.debug('Extracting colorMap. saveMap={}'.format(saveMap))
 
@@ -47,7 +57,8 @@ def extract_colormap(image, saveMap=[]):
             pal[save*3+2] = 0
     
     # Break apart the color map to help see things
-    for i in range(0xff + 1):
+    #for i in range(0xff + 1):
+    for i in index_to_save:
             pal2 = copy(pal)
             pal2[i*3] = 0
             pal2[i*3+1] = 0

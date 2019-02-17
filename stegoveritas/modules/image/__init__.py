@@ -25,7 +25,7 @@ class SVImage(ModuleBase):
             return
         
         # Should we run all default plugins?
-        if all([not veritas.args.imageTransform, not veritas.args.extractLSB, not veritas.args.bruteLSB, veritas.args.colorMap is None, not veritas.args.colorMapRange, not veritas.args.trailing, not veritas.args.meta]):
+        if all([not veritas.args.imageTransform, not veritas.args.extractLSB, not veritas.args.bruteLSB, veritas.args.colorMap is None, veritas.args.colorMapRange is None, not veritas.args.trailing, not veritas.args.meta]):
             self._default_run = True
         else:
             self._default_run = False
