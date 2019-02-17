@@ -2,12 +2,13 @@
 import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image')
 
-import os.path
+import os
 import sys
 from PIL import Image
 from prettytable import PrettyTable
 
 from .. import ModuleBase
+import hashlib
 
 class SVImage(ModuleBase):
 
@@ -87,6 +88,29 @@ class SVImage(ModuleBase):
         bits = ''.join([chr(b) for b in bArray]).encode('iso-8859-1')
 
         return bits
+
+    @staticmethod
+    def hash_file(file_name):
+        """Custom image file hasing algorithm in an attempt to make hashing less brittle to meta information.
+
+        Args:
+            file_name (str): String path to file
+    
+        Returns:
+            bytes: Hash of the given file.
+        """
+        
+        img = Image.open(file_name)
+        f = img.tobytes()
+        
+        # Need to account for the palette
+        if img.mode == 'P':
+            f += img.palette.mode.encode()
+            f += img.palette.palette
+
+        img.close()
+        return hashlib.sha256(f).hexdigest()
+            
     
     @property
     def file(self):
