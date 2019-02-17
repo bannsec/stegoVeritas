@@ -24,6 +24,10 @@ def run(image):
         logger.debug('Nothing to do.')
         return
 
+    if image.file.mode == "P":
+        logger.debug('Image is colormap, skipping..')
+        return
+
     # Try all the same indexes first. More likely stuff up front.
     # i.e.: 0,0,0  1,1,1,  2,2,2
     for i in range(0,8):

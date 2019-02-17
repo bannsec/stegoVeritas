@@ -43,9 +43,8 @@ def run(image):
     # Check what type of image is it
     # ColorMap
     if "P" in bands:
-            print("Colormap detected...")
-            colorMap(image)
-            return
+        logger.debug('Image is colormap, skipping.')
+        return
 
     ###########
     # Filters #
@@ -130,39 +129,3 @@ def run(image):
 
 
 
-
-def colorMap(image,saveMap = []):
-	"""
-	Take care of the colormaps
-	"""
-
-	# Verify we're working with a colormap
-	if image.file.mode != "P":
-		print("Input file doesn't appear to be a Color Map image... Returning")
-		return	
-	
-	# f.putpalette(f.palette.getdata()[1])
-	pal = [255 for x in range(768)]
-
-	for save in saveMap:
-		pal[save*3] = 0
-		pal[save*3+1] = 0
-		pal[save*3+2] = 0
-	
-	# Break apart the color map to help see things
-	for i in range(0xff + 1):
-		pal2 = copy(pal)
-		pal2[i*3] = 0
-		pal2[i*3+1] = 0
-		pal2[i*3+2] = 0
-		image.file.putpalette(pal2)
-		# Change to numpy
-		#g = numpy.array(f)
-		# Xor our colormap index (keep our save here)
-		#g = g ^ (i | saveMap)
-		# Contrast
-		#g[g != 0] = 0xff
-		# Revert to image
-		#g = Image.fromarray(g)
-		# Save
-		image.file.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_{0}.png".format(i)))

@@ -93,7 +93,7 @@ class StegoVeritas(object):
         parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
         parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
         parser.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
-        parser.add_argument('-colorMap',nargs="*",metavar='N',type=int,help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
+        parser.add_argument('-colorMap',nargs="*",metavar='N',type=int, default=None, help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
         parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int,help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
         parser.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
         parser.add_argument('-red',nargs='+',metavar='index',type=int)
