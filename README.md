@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bannsec/stegoVeritas.svg?branch=master)](https://travis-ci.org/bannsec/stegoVeritas)
+
 # StegoVeritas
 Yet another Stego Tool
 
