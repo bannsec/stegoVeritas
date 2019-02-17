@@ -19,9 +19,6 @@ def run(image):
     Saves the result to RESULTSDIR
     """
 
-    #global output_file
-    #output_file = os.path.join(image.veritas.results_directory, "trailing_data.bin")
-
     args = image.veritas.args
 
     # Nothing to do
