@@ -15,7 +15,7 @@ $ stegoveritas_install_deps
 
 ### Option 2 -- docker
 ```bash
-$ sudo docker run -it --rm bannsec/stegoVeritas
+$ sudo docker run -it --rm bannsec/stegoveritas
 ```
 
 ## Running
