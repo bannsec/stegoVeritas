@@ -26,7 +26,7 @@ def test_colormap_brute():
                 break
         assert found == True
 
-        assert len(glob(os.path.join(tmpdirname, '*'))) == 256
+        assert len(glob(os.path.join(tmpdirname, '*.png'))) == 256
 
 def test_colormap_extract_index():
 

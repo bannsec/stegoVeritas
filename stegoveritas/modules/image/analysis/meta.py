@@ -92,29 +92,29 @@ def parsePNGChunk(t,c):
 
 def JPEGMeta(image):
     """Deprecated -- This is effectively being replaced by the MultiHandler.Exif."""
-	meta = ""
+    meta = ""
 
-	# Open up the file for reading
-	with open(image.veritas.file_name,"rb") as jpegFile:
-		tags = exifread.process_file(jpegFile)
-		
-		for tag in tags:
-			meta += "{0}:\t{1}\n".format(tag,tags[tag])
-	
-	# Show it to the user	
-	print("Exif Data\n=========\n{0}\n".format(meta))
-	
-	# Save it off
-	with open(os.path.join(image.veritas.results_directory,"metadata"),"w") as out:
-		out.write(meta)
+    # Open up the file for reading
+    with open(image.veritas.file_name,"rb") as jpegFile:
+            tags = exifread.process_file(jpegFile)
+            
+            for tag in tags:
+                    meta += "{0}:\t{1}\n".format(tag,tags[tag])
+    
+    # Show it to the user	
+    print("Exif Data\n=========\n{0}\n".format(meta))
+    
+    # Save it off
+    with open(os.path.join(image.veritas.results_directory,"metadata"),"w") as out:
+            out.write(meta)
 	
 
 def PNGMeta(image):
 	
-	r = png.Reader(filename=image.veritas.file_name)
-	
-	for chunk in r.chunks():
-		tmp = parsePNGChunk(chunk[0],chunk[1])
-		if tmp != "":
-			print(tmp)
+    r = png.Reader(filename=image.veritas.file_name)
+    
+    for chunk in r.chunks():
+            tmp = parsePNGChunk(chunk[0],chunk[1])
+            if tmp != "":
+                    print(tmp)
 
