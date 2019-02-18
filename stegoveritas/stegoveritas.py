@@ -96,20 +96,28 @@ class StegoVeritas(object):
         parser = argparse.ArgumentParser(description='Yet another Stego tool',
                 epilog = 'Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
 
+        # Core Options
         parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
-        parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
-        parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
-        parser.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
-        parser.add_argument('-colorMap',nargs="*",metavar='N',type=int, default=None, help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
-        parser.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int, default=None, help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
-        parser.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
-        parser.add_argument('-red',nargs='+',metavar='index',type=int)
-        parser.add_argument('-green',nargs='+',metavar='index',type=int)
-        parser.add_argument('-blue',nargs='+',metavar='index',type=int)
-        parser.add_argument('-alpha',nargs='+',metavar='index',type=int)
-        parser.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
         parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
         parser.add_argument('file_name',metavar='file',type=str, default=False, help='The file to analyze')
+
+        # Image Options
+        image = parser.add_argument_group('image options')
+        image.add_argument('-meta',action='store_true',help='Check file for metadata information')
+        image.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
+        image.add_argument('-bruteLSB',action='store_true',help='Attempt to brute force any LSB related stegonography.')
+        image.add_argument('-colorMap',nargs="*",metavar='N',type=int, default=None, help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
+        image.add_argument('-colorMapRange',nargs=2,metavar=('Start','End'),type=int, default=None, help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
+        image.add_argument('-extractLSB',action='store_true',help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
+        image.add_argument('-red',nargs='+',metavar='index',type=int)
+        image.add_argument('-green',nargs='+',metavar='index',type=int)
+        image.add_argument('-blue',nargs='+',metavar='index',type=int)
+        image.add_argument('-alpha',nargs='+',metavar='index',type=int)
+        image.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
+
+        # Multi Options
+        multi = parser.add_argument_group('multi options')
+        multi.add_argument('-exif',action='store_true',default=False,help='Check this file for exif information.')
 
         self.args = parser.parse_args(args)
 
@@ -125,7 +133,7 @@ class StegoVeritas(object):
         auto.pop('out')
         auto.pop('file_name')
         auto.pop('debug')
-        self.args.auto = not any(option in [False, None] for option in auto)
+        self.args.auto = not any(option in [False, None, []] for option in auto.values())
     
     ##############
     # Properties #
