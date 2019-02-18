@@ -20,7 +20,7 @@ def run(image):
     args = image.veritas.args
 
     # Nothing to do
-    if not image._default_run and not args.bruteLSB:
+    if not args.auto and not args.bruteLSB:
         logger.debug('Nothing to do.')
         return
 

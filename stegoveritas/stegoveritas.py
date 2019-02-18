@@ -16,6 +16,7 @@ from .version import version
 import magic
 import time
 import shutil
+from copy import copy
 
 from .install_deps import required_packages
 
@@ -94,6 +95,7 @@ class StegoVeritas(object):
 
         parser = argparse.ArgumentParser(description='Yet another Stego tool',
                 epilog = 'Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
+
         parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
         parser.add_argument('-meta',action='store_true',help='Check file for metadata information')
         parser.add_argument('-imageTransform',action='store_true',help='Perform various image transformations on the input image and save them to the output directory')
@@ -116,6 +118,14 @@ class StegoVeritas(object):
 
         self.file_name = self.args.file_name
         self.results_directory = self.args.out
+
+        # Should this be considered an 'auto' run?
+        # TODO: This is SUPER hacky... Should probably find a better way to determine if this is an auto run or not.
+        auto = copy(self.args.__dict__)
+        auto.pop('out')
+        auto.pop('file_name')
+        auto.pop('debug')
+        self.args.auto = not any(option in [False, None] for option in auto)
     
     ##############
     # Properties #

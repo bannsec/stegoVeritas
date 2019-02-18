@@ -23,7 +23,7 @@ def run(multi):
     Saves the result to RESULTSDIR/exif/
     """
 
-    #args = image.veritas.args
+    args = multi.veritas.args
     # TODO: Validate that this analysis should be run (need to propagate default_run value)
 
     """

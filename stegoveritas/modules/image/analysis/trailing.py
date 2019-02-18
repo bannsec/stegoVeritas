@@ -25,7 +25,7 @@ def run(image):
     args = image.veritas.args
 
     # Nothing to do
-    if not image._default_run and not args.trailing:
+    if not args.auto and not args.trailing:
         logger.debug('Nothing to do.')
         return
 

@@ -21,7 +21,7 @@ def run(image):
     args = image.veritas.args
 
     # Nothing to do
-    if not image._default_run and args.colorMap is None and args.colorMapRange is None:
+    if not args.auto and args.colorMap is None and args.colorMapRange is None:
         logger.debug('Nothing to do.')
         return
 
