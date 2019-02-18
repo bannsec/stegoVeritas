@@ -134,7 +134,7 @@ class StegoVeritas(object):
         auto.pop('out')
         auto.pop('file_name')
         auto.pop('debug')
-        self.args.auto = not any(option in [False, None, []] for option in auto.values())
+        self.args.auto = all(option in [False, None, []] for option in auto.values())
     
     ##############
     # Properties #
