@@ -20,8 +20,9 @@ $ sudo docker run -it --rm bannsec/stegoveritas
 
 ## Running
 StegoVeritas has default actions for most image types (gif,jpeg,png,tiff,bmp)
+and will attempt to run on __any__ file.
 
-`stegoveritas.py <file>`
+`stegoveritas <file>`
 
 If you want to do something specific, you can check out the help:
 
