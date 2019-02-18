@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger('StegoVeritas')
 
 import binascii
-import os, os.path
+import os
 import argparse
 from .config import *
 from .version import version
@@ -19,6 +19,13 @@ import shutil
 from copy import copy
 
 from .install_deps import required_packages
+
+import binwalk
+import tempfile
+import hashlib
+import random
+
+from prettytable import PrettyTable
 
 class StegoVeritas(object):
 
@@ -31,6 +38,10 @@ class StegoVeritas(object):
         self._preflight()
         self._parse_args(args)
         self.modules = []
+
+        # For things we find inside test_output call
+        self._keeper_directory = os.path.join(self.results_directory, 'keepers')
+        os.makedirs(self._keeper_directory, exist_ok=True)
 
 
     def run(self):
@@ -57,8 +68,13 @@ class StegoVeritas(object):
             
             assert type(thing) == bytes, 'test_output got unexpected thing type of {}'.format(type(thing))
 
+
             # TODO: Test new logic...
             # TODO: Iterate through binary offset to find buried data
+
+            #
+            # File magic test
+            #
 
             m = magic.from_buffer(thing,mime=True)
 
@@ -68,8 +84,55 @@ class StegoVeritas(object):
                 print("Found something worth keeping!\n{0}".format(m))
                 # Save it to disk
                 # TODO: Minor race condition here if we end up multi-processing
-                with open(os.path.join(self.results_directory, str(time.time())), "wb") as f:
+                with open(os.path.join(self._keeper_directory, str(time.time())), "wb") as f:
                     f.write(thing)
+
+            #
+            # binwalk test
+            #
+
+            # TODO: Update this to in-memory scanning if binwalk updates their stuff: https://github.com/ReFirmLabs/binwalk/issues/389
+            with tempfile.TemporaryDirectory() as tmpdirname:  
+                tmp_scan_file = os.path.join(tmpdirname, 'scanme')
+
+                # Couldn't find a good 'output directory' option for binwalk. Changing dirs because of this.
+                saved_dir = os.getcwd()
+                os.chdir(tmpdirname)
+
+                with open(tmp_scan_file, 'wb') as f:
+                    f.write(thing)
+
+                table = PrettyTable(['Offset', 'Carved/Extracted', 'Description', 'File Name'])
+                table.align = 'l'
+                keepers = []
+
+                # Run the scan
+                for module in binwalk.scan(tmp_scan_file, signature=True, quiet=True, extract=True):
+                    for result in module.results:
+                        if result.file.path in module.extractor.output:
+                            if result.offset in module.extractor.output[result.file.path].carved:
+                                table.add_row([hex(result.offset), 'Carved', result.description, os.path.basename(module.extractor.output[result.file.path].carved[result.offset])])
+                                keepers.append(module.extractor.output[result.file.path].carved[result.offset])
+                                #print("Carved data from offset 0x%X to %s" % (result.offset, module.extractor.output[result.file.path].carved[result.offset]))
+                            if result.offset in module.extractor.output[result.file.path].extracted:
+                                table.add_row([hex(result.offset), 'Extracted', result.description, os.path.basename(module.extractor.output[result.file.path].extracted[result.offset].files[0])])
+                                keepers += module.extractor.output[result.file.path].extracted[result.offset].files
+                                #print("Extracted %d files from offset 0x%X to '%s' using '%s'" % (len(module.extractor.output[result.file.path].extracted[result.offset].files), result.offset, module.extractor.output[result.file.path].extracted[result.offset].files[0], module.extractor.output[result.file.path].extracted[result.offset].command))
+
+                # If we found something
+                if keepers != []:
+                    print(table)
+                    
+                    for keeper in keepers:
+                        keeper_dst = os.path.join(self._keeper_directory, os.path.basename(keeper))
+
+                        if os.path.exists(keeper_dst):
+                            logger.warn('Keeper name already exists, modifying.')
+                            keeper_dst += '_' + hashlib.md5(str(random.random()).encode()).hexdigest()
+
+                        shutil.move( keeper, keeper_dst )
+
+                os.chdir(saved_dir)
             
             # TODO: Check if strings of output contain a known word, save if so.
 

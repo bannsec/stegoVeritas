@@ -9,18 +9,24 @@ import stegoveritas
 
 SCRIPTDIR = os.path.dirname(os.path.realpath(__file__))
 
-def test_lsb_brute_1():
+def test_test_output_binwalk():
 
     with tempfile.TemporaryDirectory() as tmpdirname:  
-        args = [os.path.join(SCRIPTDIR, 'lsb_red_0.png'), '-out', tmpdirname, '-bruteLSB'] 
+        args = [os.path.join(SCRIPTDIR, 'images', 'owl_trailing.jpg'), '-out', tmpdirname]
         veritas = stegoveritas.StegoVeritas(args=args)
-        veritas.run()
+
+        with open(veritas.file_name, 'rb') as f:
+            data = f.read()
+
+        veritas.test_output(data)
 
         _, _, files = next(os.walk(veritas._keeper_directory))
         found = False
         for f in files:
             with open(os.path.join(veritas._keeper_directory, f),'rb') as f:
-                if hashlib.md5(f.read()).hexdigest() == '20ba8aa2da066e371747502079991071':
+                # text.txt
+                if hashlib.md5(f.read()).hexdigest() == 'ff22941336956098ae9a564289d1bf1b':
                     found = True
                     break
         assert found == True
+
