@@ -30,7 +30,7 @@ def run(multi):
         logger.debug('Nothing to do.')
         return
 
-    exif = json.loads(subprocess.check_output(['exiftool', '-j', multi.veritas.file_name ]))
+    exif = json.loads(subprocess.check_output(['exiftool', '-j', '-b', multi.veritas.file_name ]))
 
     table = PrettyTable(['key','value'])
     table.align='l'
