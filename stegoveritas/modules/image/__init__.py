@@ -127,6 +127,7 @@ class SVImage(ModuleBase):
         table.add_row([self.file.format_description, 'ColorMap' if self.file.mode == 'P' else self.file.mode])
         return str(table)
 
+
 def autoAnalysis(f,args):
 	"""
 	Input:

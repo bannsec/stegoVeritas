@@ -81,6 +81,11 @@ class StegoVeritas(object):
             if shutil.which(package) is None:
                 missing_packages.append(package)
 
+        try:
+            import libxmp.utils
+        except:
+            missing_packages.append('libexempi3')
+
         if missing_packages != []:
             logger.error('Missing the following required packages: ' + ', '.join(missing_packages))
             logger.error('Either install them manually or run \'stegoveritas_install_deps\'.')

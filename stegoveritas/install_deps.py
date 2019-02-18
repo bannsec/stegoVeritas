@@ -25,7 +25,7 @@ def main():
 
 def ubuntu():
     
-    packages = ['binwalk', 'libimage-exiftool-perl']
+    packages = ['binwalk', 'libimage-exiftool-perl', 'libexempi3']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
