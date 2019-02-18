@@ -26,14 +26,11 @@ def run(image):
         logger.debug('Nothing to do.')
         return
 
-    if image.file.format == "JPEG" or image.file.format == "TIFF":
-            JPEGMeta(image)
-
-    elif image.file.format == "PNG":
-            PNGMeta(image)
+    if image.file.format == "PNG":
+        PNGMeta(image)
 
     else:
-            print("No metadata parsing support for {0}".format(image.file.format))
+        logger.debug("No metadata parsing support for {0}".format(image.file.format))
 
 def parsePNGChunk(t,c):
 	"""
@@ -94,6 +91,7 @@ def parsePNGChunk(t,c):
 	return ""
 
 def JPEGMeta(image):
+    """Deprecated -- This is effectively being replaced by the MultiHandler.Exif."""
 	meta = ""
 
 	# Open up the file for reading
