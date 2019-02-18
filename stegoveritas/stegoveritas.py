@@ -176,6 +176,7 @@ class StegoVeritas(object):
         image.add_argument('-green',nargs='+',metavar='index',type=int)
         image.add_argument('-blue',nargs='+',metavar='index',type=int)
         image.add_argument('-alpha',nargs='+',metavar='index',type=int)
+        image.add_argument('-extract_frames',action='store_true',default=False, help='Split up an animated gif into individual frames.')
         image.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
 
         # Multi Options
