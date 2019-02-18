@@ -24,14 +24,11 @@ def run(multi):
     """
 
     args = multi.veritas.args
-    # TODO: Validate that this analysis should be run (need to propagate default_run value)
 
-    """
     # Nothing to do
-    if not image._default_run and not args.meta:
+    if not args.auto and not args.exif:
         logger.debug('Nothing to do.')
         return
-    """
 
     exif = json.loads(subprocess.check_output(['exiftool', '-j', multi.veritas.file_name ]))
 

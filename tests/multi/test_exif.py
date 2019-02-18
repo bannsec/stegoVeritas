@@ -12,7 +12,7 @@ SCRIPTDIR = os.path.dirname(os.path.realpath(__file__))
 def test_exif_jpg():
 
     with tempfile.TemporaryDirectory() as tmpdirname:  
-        args = [os.path.join(SCRIPTDIR, 'owl_exif_comment.jpg'), '-out', tmpdirname] 
+        args = [os.path.join(SCRIPTDIR, 'owl_exif_comment.jpg'), '-out', tmpdirname, '-exif'] 
         veritas = stegoveritas.StegoVeritas(args=args)
         veritas.run()
 

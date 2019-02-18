@@ -118,6 +118,7 @@ class StegoVeritas(object):
         # Multi Options
         multi = parser.add_argument_group('multi options')
         multi.add_argument('-exif',action='store_true',default=False,help='Check this file for exif information.')
+        multi.add_argument('-xmp',action='store_true',default=False,help='Check this file for XMP information.')
 
         self.args = parser.parse_args(args)
 
