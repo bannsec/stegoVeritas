@@ -9,7 +9,7 @@ import subprocess
 import getpass
 
 # What is required by stegoveritas?
-required_packages = ['exiftool'. '7z']
+required_packages = ['exiftool', '7z']
 
 def main():
 
