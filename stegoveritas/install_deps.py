@@ -9,7 +9,7 @@ import subprocess
 import getpass
 
 # What is required by stegoveritas?
-required_packages = ['binwalk']
+required_packages = ['binwalk', 'exiftool']
 
 def main():
 
@@ -25,7 +25,7 @@ def main():
 
 def ubuntu():
     
-    packages = ['binwalk']
+    packages = ['binwalk', 'libimage-exiftool-perl']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
