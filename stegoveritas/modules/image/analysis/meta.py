@@ -19,6 +19,9 @@ def run(image):
     Saves the result to RESULTSDIR/metadata
     """
 
+    # This is pretty much replaced entirely by exiftool at the moment..
+    return
+
     args = image.veritas.args
 
     # Nothing to do
