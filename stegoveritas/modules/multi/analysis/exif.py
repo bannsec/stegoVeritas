@@ -30,7 +30,8 @@ def run(multi):
         logger.debug('Nothing to do.')
         return
 
-    exif = json.loads(subprocess.check_output(['exiftool', '-j', '-b', multi.veritas.file_name ]))
+    # Note: Python3.6+ added json.loads support for bytes. Thus using decode for backwards compatibility.
+    exif = json.loads(subprocess.check_output(['exiftool', '-j', '-b', multi.veritas.file_name ]).decode())
 
     table = PrettyTable(['key','value'])
     table.align='l'

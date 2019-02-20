@@ -4,12 +4,15 @@ services:
     - docker
 python:
     - 3.6
+env:
+    - DOCKERFILE=Dockerfile
+    - DOCKERFILE=Dockerfile.debian
 before_install:
     - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     - sudo apt-get update
     - sudo apt-get -y install docker-ce
 install:
-    - docker build -t bannsec/stegoveritas .
+    - docker build -t bannsec/stegoveritas -f $DOCKERFILE .
 script:
     - docker run -it --rm -e TRAVIS_BRANCH=$TRAVIS_BRANCH bannsec/stegoveritas bash -c 'cd /opt/stegoveritas && pytest tests && if [ ! -z "$COVERALLS_REPO_TOKEN" ]; then coveralls; fi'
