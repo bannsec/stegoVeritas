@@ -33,7 +33,7 @@ usage: stegoveritas [-h] [-out dir] [-debug] [-meta] [-imageTransform]
                     [-colorMapRange Start End] [-extractLSB]
                     [-red index [index ...]] [-green index [index ...]]
                     [-blue index [index ...]] [-alpha index [index ...]]
-                    [-trailing] [-exif] [-xmp]
+                    [-extract_frames] [-trailing] [-exif] [-xmp] [-carve]
                     file
 
 Yet another Stego tool
@@ -63,11 +63,13 @@ image options:
   -green index [index ...]
   -blue index [index ...]
   -alpha index [index ...]
+  -extract_frames       Split up an animated gif into individual frames.
   -trailing             Check for trailing data on the given file
 
 multi options:
   -exif                 Check this file for exif information.
   -xmp                  Check this file for XMP information.
+  -carve                Attempt to carve/extract things from this file.
 
 Have a good example? Wish it did something more? Submit a ticket:
 https://github.com/bannsec/stegoVeritas
