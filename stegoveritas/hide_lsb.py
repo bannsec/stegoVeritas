@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import logging
+
 # Helper tool to encode something LSB style into an image.
 
 from PIL import Image
@@ -10,7 +12,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Simple tool to add LSB stego into an image.')
     parser.add_argument('-file', type=str, help='If specified, encode this file into the image instead of text.')
     parser.add_argument('-bands', type=str, help='Color order. I.e.: RGB, BGR, GBR, etc', default='RGB')
-    parser.add_argument('-output', type=str, default=None, help='Specify the output file name (i.e.: out.gif, out.png)')
+    parser.add_argument('-output', type=str, default=None, help='Specify the output file name (i.e.: out.png)')
     parser.add_argument('input_file', metavar='file', help='File to add LSB stego into.')
     parser.add_argument('text', nargs='*', help='Text to encode into the file.')
     return parser.parse_args()
@@ -49,6 +51,9 @@ def main():
 
     # Write it out
     if args.output is not None:
+        if args.output.split('.')[-1].lower() not in ['png', 'bmp']:
+            logging.warn('Outputting to lossy formats might screw up LSB! Should probably stick to PNG or BMP formats.')
+
         img.save(args.output)
     else:
         img.save(input_file + '_lsb.png')
@@ -81,6 +86,7 @@ def encode_pixel(x, y, band, value, bit=0):
         new_value = orig_value | bitmask
 
     update_pixel(x, y, band, new_value)
+    assert get_pixel(x,y,band) == new_value
 
 
 def get_pixel(x, y, band):

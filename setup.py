@@ -43,6 +43,7 @@ setup(
         'console_scripts': [
             'stegoveritas = stegoveritas.stegoveritas:main',
             'stegoveritas_install_deps = stegoveritas.install_deps:main',
+            'stegoveritas_hide_lsb = stegoveritas.hide_lsb:main',
         ],
     },
 )
