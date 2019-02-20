@@ -9,7 +9,7 @@ import subprocess
 import getpass
 
 # What is required by stegoveritas?
-required_packages = ['exiftool', '7z']
+required_packages = ['exiftool', '7z', 'foremost']
 
 def main():
 
@@ -28,14 +28,14 @@ def main():
 
 def debian():
     
-    packages = ['libimage-exiftool-perl', 'libexempi3', 'p7zip-full']
+    packages = ['libimage-exiftool-perl', 'libexempi3', 'p7zip-full', 'foremost']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
 
 def fedora():
     
-    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins']
+    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost']
 
     subprocess.run(command_start + ['yum','install','-y'] + packages)
 
