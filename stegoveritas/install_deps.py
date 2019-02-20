@@ -15,7 +15,7 @@ def main():
 
     dist_name, dist_version, dist_id = platform.dist()
     
-    if dist_name.lower() in ['ubuntu', 'debian']:
+    if dist_name.lower() in ['ubuntu', 'debian', 'kali']:
         debian()
 
     elif dist_name.lower() == 'fedora':
