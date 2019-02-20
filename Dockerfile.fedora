@@ -1,0 +1,14 @@
+FROM fedora:latest
+
+RUN yum update -y && \
+    yum install -y python3 python3-pip && \
+    useradd -m -s /bin/bash stegoveritas && \
+    mkdir -p /opt
+
+COPY --chown=stegoveritas:stegoveritas . /opt/stegoveritas/
+
+RUN cd /opt/stegoveritas && pip3 install -e .[dev] && \
+    stegoveritas_install_deps
+
+WORKDIR /home/stegoveritas
+USER stegoveritas
