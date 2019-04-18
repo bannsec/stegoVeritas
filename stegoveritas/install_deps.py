@@ -20,6 +20,9 @@ def main():
 
     elif dist_name.lower() == 'fedora':
         fedora()
+        
+    elif dist_name.lower() == 'archlinux':
+        archlinux()
 
     else:
         logger.error('Unhandled distribution to install deps: {}'.format(', '.join(platform.dist())))
@@ -38,6 +41,13 @@ def fedora():
     packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost']
 
     subprocess.run(command_start + ['yum','install','-y'] + packages)
+
+def archlinux():
+    
+    packages = ['perl-image-exiftool', 'p7zip', 'foremost']
+
+    subprocess.run(command_start + ['pacman','-Syu'])
+    subprocess.run(command_start + ['pacman','-S'] + packages)
 
 # Standardize using sudo or not
 command_start = ['sudo'] if getpass.getuser() != 'root' else []
