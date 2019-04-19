@@ -31,7 +31,7 @@ def main():
 
 def debian():
     
-    packages = ['libimage-exiftool-perl', 'libexempi3', 'p7zip-full', 'foremost']
+    packages = ['libimage-exiftool-perl', 'libexempi*', 'p7zip-full', 'foremost']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
