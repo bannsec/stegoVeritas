@@ -21,7 +21,7 @@ def main():
     elif dist_name.lower() == 'fedora':
         fedora()
         
-    elif dist_name.lower() == 'archlinux':
+    elif (dist_name.lower() == 'archlinux' or 'arch'):
         archlinux()
 
     else:
