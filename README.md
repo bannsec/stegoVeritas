@@ -6,17 +6,31 @@
 Yet another Stego Tool
 
 # Quick Start
+
 ## Install
+
 ### Option 1 -- pip
+
 ```bash
 $ pip3 install stegoveritas
 $ stegoveritas_install_deps
 ```
 
+`stegoveritas_install_deps` currently supports: ubuntu, debian, kali, fedora, archlinux.
+
 ### Option 2 -- docker
+
 ```bash
 $ sudo docker run -it --rm bannsec/stegoveritas
 ```
+
+### Option 3 -- [BlackArch](https://blackarch.org/)
+
+```bash
+$ sudo pacman -S stegoveritas
+```
+
+[PKGBUILD](https://github.com/BlackArch/blackarch/blob/master/packages/stegoveritas/PKGBUILD)
 
 ## Running
 StegoVeritas has default actions for most image types (gif,jpeg,png,tiff,bmp)
