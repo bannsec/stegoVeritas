@@ -16,13 +16,13 @@ def main():
 
     dist_name = distro.name().lower()
     
-    if dist_name in ['ubuntu', 'debian', 'kali']:
+    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux']:
         debian()
 
     elif dist_name == 'fedora':
         fedora()
         
-    elif (dist_name == 'archlinux' or 'arch'):
+    elif (dist_name in ['archlinux' or 'arch']):
         archlinux()
 
     else:
