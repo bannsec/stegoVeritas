@@ -2,7 +2,6 @@
 from . import Colorer
 import logging
 logger = logging.getLogger(__name__)
-print(__name__)
 
 import subprocess
 import distro
@@ -16,13 +15,13 @@ def main():
 
     dist_name = distro.name().lower()
     
-    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux']:
+    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux', 'kali gnu/linux']:
         debian()
 
     elif dist_name == 'fedora':
         fedora()
         
-    elif (dist_name in ['archlinux' or 'arch']):
+    elif dist_name in ['archlinux', 'arch']:
         archlinux()
 
     else:
