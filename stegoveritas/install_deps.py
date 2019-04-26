@@ -1,10 +1,11 @@
 
 from . import Colorer
 import logging
-logger = logging.getLogger('StegoVeritas:InstallDeps')
+logger = logging.getLogger(__name__)
+print(__name__)
 
-import platform
 import subprocess
+import distro
 
 import getpass
 
@@ -13,19 +14,19 @@ required_packages = ['exiftool', '7z', 'foremost']
 
 def main():
 
-    dist_name, dist_version, dist_id = platform.dist()
+    dist_name = distro.name().lower()
     
-    if dist_name.lower() in ['ubuntu', 'debian', 'kali']:
+    if dist_name in ['ubuntu', 'debian', 'kali']:
         debian()
 
-    elif dist_name.lower() == 'fedora':
+    elif dist_name == 'fedora':
         fedora()
         
-    elif (dist_name.lower() == 'archlinux' or 'arch'):
+    elif (dist_name == 'archlinux' or 'arch'):
         archlinux()
 
     else:
-        logger.error('Unhandled distribution to install deps: {}'.format(', '.join(platform.dist())))
+        logger.error('Unhandled distribution to install deps: {}'.format(dist_name))
         logger.error('Please poke me or submit a PR.')
         return
 
