@@ -10,7 +10,6 @@ logger = logging.getLogger('StegoVeritas')
 import binascii
 import os
 import argparse
-from .config import *
 from .version import version
 
 import magic
