@@ -31,14 +31,14 @@ def main():
 
 def debian():
     
-    packages = ['libimage-exiftool-perl', 'libexempi*', 'p7zip-full', 'foremost']
+    packages = ['libimage-exiftool-perl', 'libexempi*', 'p7zip-full', 'foremost', 'steghide']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
 
 def fedora():
     
-    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost']
+    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost', 'steghide']
 
     subprocess.run(command_start + ['yum','install','-y'] + packages)
 

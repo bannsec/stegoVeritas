@@ -161,6 +161,7 @@ class StegoVeritas(object):
         # Core Options
         parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
         parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
+        parser.add_argument('-password',type=str,default=None,help='When applicable, attempt to use this password to extract data.')
         parser.add_argument('file_name',metavar='file',type=str, default=False, help='The file to analyze')
 
         # Image Options
@@ -177,6 +178,7 @@ class StegoVeritas(object):
         image.add_argument('-alpha',nargs='+',metavar='index',type=int)
         image.add_argument('-extract_frames',action='store_true',default=False, help='Split up an animated gif into individual frames.')
         image.add_argument('-trailing',action='store_true',help='Check for trailing data on the given file')
+        image.add_argument('-steghide',action='store_true',help='Check for StegHide hidden info.')
 
         # Multi Options
         multi = parser.add_argument_group('multi options')
