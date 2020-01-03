@@ -21,7 +21,7 @@ def main():
     elif dist_name == 'fedora':
         fedora()
         
-    elif dist_name in ['archlinux', 'arch']:
+    elif dist_name in ['archlinux', 'arch', 'arch linux']:
         archlinux()
 
     else:
@@ -44,7 +44,7 @@ def fedora():
 
 def archlinux():
     
-    packages = ['perl-image-exiftool', 'p7zip', 'foremost']
+    packages = ['perl-image-exiftool', 'p7zip', 'foremost', 'steghide', 'exempi']
 
     subprocess.run(command_start + ['pacman','-Syu'])
     subprocess.run(command_start + ['pacman','-S'] + packages)
