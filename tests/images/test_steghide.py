@@ -48,3 +48,19 @@ def test_steghide_wrong_password():
         hidden = glob(os.path.join(tmpdirname, 'steghide_*.bin'))
 
         assert len(hidden) == 0
+
+def test_steghide_wordlist():
+
+    wordlist = os.path.join(SCRIPTDIR, 'wordlist.txt')
+
+    with tempfile.TemporaryDirectory() as tmpdirname:  
+        args = [os.path.join(SCRIPTDIR, 'owl_steghide_password.jpg'), '-out', tmpdirname, '-steghide', '-wordlist', wordlist] 
+        veritas = stegoveritas.StegoVeritas(args=args)
+        veritas.run()
+
+        hidden = glob(os.path.join(tmpdirname, 'steghide_*.bin'))
+
+        assert len(hidden) == 1
+
+        with open(os.path.join(tmpdirname, hidden[0]), "r") as f:
+            assert f.read().startswith("This is hidden!")

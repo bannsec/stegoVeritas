@@ -162,6 +162,7 @@ class StegoVeritas(object):
         parser.add_argument('-out',metavar='dir',type=str, help='Directory to place output in. Defaults to ./results',default=os.path.abspath('./results'))
         parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
         parser.add_argument('-password',type=str,default=None,help='When applicable, attempt to use this password to extract data.')
+        parser.add_argument('-wordlist',type=str,default=None,help='When applicable, attempt to brute force with this wordlist.')
         parser.add_argument('file_name',metavar='file',type=str, default=False, help='The file to analyze')
 
         # Image Options

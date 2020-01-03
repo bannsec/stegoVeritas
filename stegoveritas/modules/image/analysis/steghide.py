@@ -32,8 +32,19 @@ def run(image):
     # Always try without password
     try_extract(image)
 
+    # Try password
     if args.password is not None:
         try_extract(image, args.password)
+
+    # Brute force wordlist
+    if args.wordlist is not None:
+
+        with open(args.wordlist, "r") as f:
+            line = f.readline().strip()
+
+            while line:
+                try_extract(image, line)
+                line = f.readline().strip()
 
 def try_extract(image, password=None):
 
