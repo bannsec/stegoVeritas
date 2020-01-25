@@ -60,6 +60,9 @@ def run(multi):
             logger.warn('Exif outpat already exists, modifying.')
             outfile += '_' + hashlib.md5(str(random.random()).encode()).hexdigest()
 
+        if isinstance(value, list):
+            value = ", ".join(value)
+
         with open(outfile, 'wb') as f:
             f.write(value.encode())
 
