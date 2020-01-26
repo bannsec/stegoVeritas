@@ -114,6 +114,7 @@ class StegoVeritas(object):
                                 keepers.append(module.extractor.output[result.file.path].carved[result.offset])
                                 #print("Carved data from offset 0x%X to %s" % (result.offset, module.extractor.output[result.file.path].carved[result.offset]))
                             if result.offset in module.extractor.output[result.file.path].extracted:
+                                #print(result.offset, module.extractor.output[result.file.path].extracted)
                                 table.add_row([hex(result.offset), 'Extracted', result.description, os.path.basename(module.extractor.output[result.file.path].extracted[result.offset].files[0])])
                                 keepers += module.extractor.output[result.file.path].extracted[result.offset].files
                                 #print("Extracted %d files from offset 0x%X to '%s' using '%s'" % (len(module.extractor.output[result.file.path].extracted[result.offset].files), result.offset, module.extractor.output[result.file.path].extracted[result.offset].files[0], module.extractor.output[result.file.path].extracted[result.offset].command))
