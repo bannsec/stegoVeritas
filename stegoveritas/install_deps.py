@@ -21,7 +21,7 @@ def main():
     elif dist_name == 'fedora':
         fedora()
         
-    elif dist_name in ['archlinux', 'arch', 'arch linux']:
+    elif dist_name in ['archlinux', 'arch', 'arch linux', 'manjaro', 'manjaro linux']:
         archlinux()
 
     else:
