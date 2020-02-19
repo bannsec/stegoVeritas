@@ -6,6 +6,7 @@ import tempfile
 import os
 import hashlib
 import stegoveritas
+import lzma
 
 SCRIPTDIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -54,6 +55,21 @@ def test_extract_rgb_0_lrtb():
         # Verify we're expecting that
         with open(os.path.join(tmpdirname, 'LSBExtracted.bin'),'rb') as f:
             assert hashlib.md5(f.read()).hexdigest() == '7cd0b50baaf727f4c6ad7565ab55a2e0'
+
+def test_extract_truncated_image():
+
+    with tempfile.TemporaryDirectory() as tmpdirname:  
+
+        with lzma.open(os.path.join(SCRIPTDIR, 'pico2018-special-logo.bmp.xz'), "rb") as f:
+            with open(os.path.join(tmpdirname, 'pico2018-special-logo.bmp'), "wb") as g:
+                g.write(f.read())
+
+        args = [os.path.join(tmpdirname, 'pico2018-special-logo.bmp'), '-out', tmpdirname, '-extractLSB', '-red', '0', '-green', '0', '-blue', '0'] 
+        veritas = stegoveritas.StegoVeritas(args=args)
+        veritas.run()
+
+        # Just make sure it ran
+        assert os.path.exists(os.path.join(tmpdirname, 'LSBExtracted.bin'))
 
 # TODO: Extract other scan types (bottom->up for example)
 # TODO: Extract higher bitplanes (0,1,2 combined for example)

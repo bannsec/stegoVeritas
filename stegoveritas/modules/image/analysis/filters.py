@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Filters')
 
 import os
-from PIL import Image,ImageFilter
+from PIL import Image,ImageFilter,ImageFile
 import numpy
 from copy import copy
 
@@ -51,8 +51,15 @@ def run(image):
     filters = [ImageFilter.EDGE_ENHANCE, ImageFilter.EDGE_ENHANCE_MORE, ImageFilter.FIND_EDGES, ImageFilter.MaxFilter, ImageFilter.MedianFilter, ImageFilter.MinFilter, ImageFilter.ModeFilter, ImageFilter.SHARPEN, ImageFilter.SMOOTH, ImageFilter.GaussianBlur]
     
     for filt in filters:
+        try:
             g = f_a.filter(filt)
-            g.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + filt.name.replace(" ","_") + ".png"))
+        except IOError as e:
+            # Generically print it, then try again (truncated error)
+            logger.error("%s", e)
+            ImageFile.LOAD_TRUNCATED_IMAGES = True
+            g = f_a.filter(filt)
+
+        g.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + filt.name.replace(" ","_") + ".png"))
     
     ################
     # Color planes #

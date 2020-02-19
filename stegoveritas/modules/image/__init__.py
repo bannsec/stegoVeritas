@@ -4,7 +4,7 @@ logger = logging.getLogger('StegoVeritas:Modules:Image')
 
 import os
 import sys
-from PIL import Image
+from PIL import Image, ImageFile
 from prettytable import PrettyTable
 
 from .. import ModuleBase
@@ -55,7 +55,13 @@ class SVImage(ModuleBase):
         bands = self.file.getbands()
 
         # Get the image bytes
-        fBytes = self.file.tobytes()
+        try:
+            fBytes = self.file.tobytes()
+        except IOError as e:
+            # Generically print it, then try again (truncated error)
+            logger.error("%s", e)
+            ImageFile.LOAD_TRUNCATED_IMAGES = True
+            fBytes = self.file.tobytes()
 
         # TODO: The following assumes an ordering of RGBA. If this is ever not the case, things will get mixed up
         # Loop through all the bytes of the image

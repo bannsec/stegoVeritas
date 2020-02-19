@@ -2,6 +2,8 @@
 import logging
 logging.basicConfig(level=logging.DEBUG,format='%(name)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
+from glob import glob
+import lzma
 import tempfile
 import os
 import hashlib
@@ -24,3 +26,17 @@ def test_filters_general():
 
         for f in files:
             assert SVImage.hash_file(os.path.join(tmpdirname, f)) in expected_hashes
+
+def test_filters_truncated_image():
+
+    with tempfile.TemporaryDirectory() as tmpdirname:  
+
+        with lzma.open(os.path.join(SCRIPTDIR, 'pico2018-special-logo.bmp.xz'), "rb") as f:
+            with open(os.path.join(tmpdirname, 'pico2018-special-logo.bmp'), "wb") as g:
+                g.write(f.read())
+
+        args = [os.path.join(tmpdirname, 'pico2018-special-logo.bmp'), '-out', tmpdirname, '-imageTransform'] 
+        veritas = stegoveritas.StegoVeritas(args=args)
+        veritas.run()
+
+        assert len(glob(os.path.join(tmpdirname, "*"))) > 3
