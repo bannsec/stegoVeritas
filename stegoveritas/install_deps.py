@@ -20,9 +20,12 @@ def main():
 
     elif dist_name == 'fedora':
         fedora()
-        
+
     elif dist_name in ['archlinux', 'arch', 'arch linux', 'manjaro', 'manjaro linux']:
         archlinux()
+
+    elif dist_name == 'parrot gnu/linux':
+        parrot()
 
     else:
         logger.error('Unhandled distribution to install deps: {}'.format(dist_name))
@@ -30,24 +33,31 @@ def main():
         return
 
 def debian():
-    
+
     packages = ['libimage-exiftool-perl', 'libexempi*', 'p7zip-full', 'foremost', 'steghide']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
 
 def fedora():
-    
+
     packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost', 'steghide']
 
     subprocess.run(command_start + ['yum','install','-y'] + packages)
 
 def archlinux():
-    
+
     packages = ['perl-image-exiftool', 'p7zip', 'foremost', 'steghide', 'exempi']
 
     subprocess.run(command_start + ['pacman','-Syu'])
     subprocess.run(command_start + ['pacman','-S'] + packages)
+
+def parrot():
+
+    packages = ['exempi']
+
+    subprocess.run(command_start + ['apt-get','update'])
+    subprocess.run(command_start + ['apt-get','install','-y'])
 
 # Standardize using sudo or not
 command_start = ['sudo'] if getpass.getuser() != 'root' else []
