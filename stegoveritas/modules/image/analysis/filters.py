@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Filters')
 
 import os
-from PIL import Image, ImageFilter, ImageFile, ImageEnhance
+from PIL import Image, ImageFilter, ImageFile, ImageEnhance, ImageOps
 import numpy
 from copy import copy
 import multiprocessing
@@ -27,6 +27,10 @@ def run_enhancer(image, enhancers, outname):
     for enhancer, adjustment in enhancers:
         img = enhancer(img).enhance(adjustment)
 
+    img.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + outname))
+
+def run_image_op(image, op, outname):
+    img = op(image.file)
     img.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + outname))
 
 def run_invert(image, f_a):
@@ -146,22 +150,34 @@ def run(image):
             {'enhancers': [(ImageEnhance.Sharpness, -100)], 'outname': 'enhance_sharpness_-100.png'},
     ]
 
+    image_ops = [
+            {'op': ImageOps.autocontrast, 'outname': 'autocontrast.png'},
+            {'op': ImageOps.grayscale, 'outname': 'grayscale.png'},
+            {'op': ImageOps.equalize, 'outname': 'equalize.png'},
+            {'op': ImageOps.invert, 'outname': 'inverted.png'},
+            {'op': ImageOps.solarize, 'outname': 'solarized.png'},
+    ]
+
     wait_for = []
 
     with multiprocessing.Pool() as pool:
 
         # Generic filters
         for filt in filters:
-            wait_for.append(pool.apply_async(run_filter, args=(image, f_a, filt)))
+            wait_for.append(pool.apply_async(run_filter, args=(image, f_a, filt), error_callback=print_error))
 
         # Specific color planes
         for plane in ["red", "green", "blue", "alpha"]:
-            wait_for.append(pool.apply_async(run_color_planes, args=(image, f_a, plane)))
+            wait_for.append(pool.apply_async(run_color_planes, args=(image, f_a, plane), error_callback=print_error))
 
         # Enhancers
         for run in enhancers:
             wait_for.append(pool.apply_async(run_enhancer, args=(image,), kwds=run, error_callback=print_error))
     
+        # Image Ops
+        for run in image_ops:
+            wait_for.append(pool.apply_async(run_image_op, args=(image,), kwds=run, error_callback=print_error))
+
         ##################
         # Bit Map Planes #
         ##################
@@ -171,7 +187,7 @@ def run(image):
         for plane in colorPlanes:
                 for i in range(8):
                     # run_bit_plane(image, f_a, color, index
-                    wait_for.append(pool.apply_async(run_bit_plane, args=(image, f_a, plane, color, i)))
+                    wait_for.append(pool.apply_async(run_bit_plane, args=(image, f_a, plane, color, i), error_callback=print_error))
                 # Move to next color
                 if color == "Red":
                         color = "Green"
@@ -185,7 +201,7 @@ def run(image):
                         raise Exception("We got more planes than we were expecting...\nPlanes: {0}".format(colorPlanes))
 
         # Inverting
-        wait_for.append(pool.apply_async(run_invert, args=(image, f_a)))
+        #wait_for.append(pool.apply_async(run_invert, args=(image, f_a)))
 
         # Wait for everything to finish
         for w in wait_for: w.wait()
