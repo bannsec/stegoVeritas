@@ -3,10 +3,11 @@ import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Filters')
 
 import os
-from PIL import Image, ImageFilter, ImageFile
+from PIL import Image, ImageFilter, ImageFile, ImageEnhance
 import numpy
 from copy import copy
 import multiprocessing
+from ....helpers import print_error
 
 def run_filter(image, f_a, filt):
     try:
@@ -18,6 +19,15 @@ def run_filter(image, f_a, filt):
         g = f_a.filter(filt)
 
     g.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + filt.name.replace(" ","_") + ".png"))
+
+def run_enhancer(image, enhancers, outname):
+    img = image.file
+
+    # Iteratively apply enhancements
+    for enhancer, adjustment in enhancers:
+        img = enhancer(img).enhance(adjustment)
+
+    img.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + outname))
 
 def run_invert(image, f_a):
     g = numpy.array(f_a)
@@ -122,6 +132,20 @@ def run(image):
     
     # Built-in filters to apply
     filters = [ImageFilter.EDGE_ENHANCE, ImageFilter.EDGE_ENHANCE_MORE, ImageFilter.FIND_EDGES, ImageFilter.MaxFilter, ImageFilter.MedianFilter, ImageFilter.MinFilter, ImageFilter.ModeFilter, ImageFilter.SHARPEN, ImageFilter.SMOOTH, ImageFilter.GaussianBlur]
+
+    # {'enhancers': [(ImageEnhance.Brightness, 0.5), (ImageEnhance.Contrast, 50)], 'outname': 'enhance_contrast_50_brightness_-50.png'},
+    # Each item in enhancer will be applied linearly
+    enhancers = [
+            {'enhancers': [(ImageEnhance.Sharpness, 25)], 'outname': 'enhance_sharpness_25.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, 50)], 'outname': 'enhance_sharpness_50.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, 75)], 'outname': 'enhance_sharpness_75.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, 100)], 'outname': 'enhance_sharpness_100.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, -25)], 'outname': 'enhance_sharpness_-25.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, -50)], 'outname': 'enhance_sharpness_-50.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, -75)], 'outname': 'enhance_sharpness_-75.png'},
+            {'enhancers': [(ImageEnhance.Sharpness, -100)], 'outname': 'enhance_sharpness_-100.png'},
+    ]
+
     wait_for = []
 
     with multiprocessing.Pool() as pool:
@@ -133,6 +157,10 @@ def run(image):
         # Specific color planes
         for plane in ["red", "green", "blue", "alpha"]:
             wait_for.append(pool.apply_async(run_color_planes, args=(image, f_a, plane)))
+
+        # Enhancers
+        for run in enhancers:
+            wait_for.append(pool.apply_async(run_enhancer, args=(image,), kwds=run, error_callback=print_error))
     
         ##################
         # Bit Map Planes #
