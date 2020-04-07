@@ -50,7 +50,7 @@ def run(multi):
     os.makedirs(save_dir, exist_ok=True)
 
     for key,value in exif_values:
-        if type(value) in [int, float]:
+        if type(value) in [int, float, bool]:
             value = str(value)
 
         outfile = os.path.join(save_dir, slugify(key))
@@ -61,7 +61,7 @@ def run(multi):
             outfile += '_' + hashlib.md5(str(random.random()).encode()).hexdigest()
 
         if isinstance(value, list):
-            value = ", ".join(value)
+            value = ", ".join(str(x) for x in value)
 
         with open(outfile, 'wb') as f:
             f.write(value.encode())
