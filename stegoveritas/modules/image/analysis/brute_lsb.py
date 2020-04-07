@@ -4,6 +4,13 @@ logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:BruteLSB')
 
 import os
 import shutil
+import multiprocessing
+from ....helpers import print_error
+
+def run_dump(image, red_index=None, green_index=None, blue_index=None):
+    logger.debug("Trying red={0} green={0} blue={0}".format(red_index, green_index, blue_index))
+    o = image.dumpLSBRGBA(red_index=red_index, green_index=green_index, blue_index=blue_index)
+    image.veritas.test_output(o)
 
 def run(image):
     """Attempts to brute force out any LSB stego.
@@ -28,54 +35,48 @@ def run(image):
         logger.debug('Image is colormap, skipping..')
         return
 
-    # Try all the same indexes first. More likely stuff up front.
-    # i.e.: 0,0,0  1,1,1,  2,2,2
-    for i in range(0,8):
-        logger.debug("Trying {0}.{0}.{0}".format(i))
-        o = image.dumpLSBRGBA(red_index=[i],green_index=[i],blue_index=[i])
-        image.veritas.test_output(o)
+    with multiprocessing.Pool() as pool:
+        wait_for = []
 
-    # Try Red
-    i = []
-    for x in range(8):
-        i.append(x)
-        logger.debug("Trying Red {0}".format(i))
-        o = image.dumpLSBRGBA(red_index=i)
-        image.veritas.test_output(o)
+        # Try all the same indexes first. More likely stuff up front.
+        # i.e.: 0,0,0  1,1,1,  2,2,2
+        for i in range(0,8):
+            wait_for.append(pool.apply_async(run_dump, args=(image,), kwds={'red_index': [i], "green_index": [i], "blue_index": [i]}, error_callback=print_error))
 
-    # Try Green
-    i = []
-    for x in range(8):
-        i.append(x)
-        logger.debug("Trying Green {0}".format(i))
-        o = image.dumpLSBRGBA(green_index=i)
-        image.veritas.test_output(o)
-
-    # Try Blue
-    i = []
-    for x in range(8):
-        i.append(x)
-        logger.debug("Trying Blue {0}".format(i))
-        o = image.dumpLSBRGBA(blue_index=i)
-        image.veritas.test_output(o)
-
-    # Try Alpha
-    if "A" in image.file.mode:
+        # Try Red
         i = []
         for x in range(8):
             i.append(x)
-            logger.debug("Trying Alpha {0}".format(i))
-            o = image.dumpLSBRGBA(alpha_index=i)
-            image.veritas.test_output(o)
+            wait_for.append(pool.apply_async(run_dump, args=(image,), kwds={'red_index': i[::]}, error_callback=print_error))
 
-    # Try across the board
-    # i.e.: 0,0,0  01,01,01 etc
-    i = []
-    for x in range(8):
-        i.append(x)
-        logger.debug("Trying {0}x{0}x{0}".format(i))
-        o = image.dumpLSBRGBA(red_index=i,green_index=i,blue_index=i)
-        image.veritas.test_output(o)
+        # Try Green
+        i = []
+        for x in range(8):
+            i.append(x)
+            wait_for.append(pool.apply_async(run_dump, args=(image,), kwds={'green_index': i[::]}, error_callback=print_error))
+
+        # Try Blue
+        i = []
+        for x in range(8):
+            i.append(x)
+            wait_for.append(pool.apply_async(run_dump, args=(image,), kwds={'blue_index': i[::]}, error_callback=print_error))
+
+        # Try Alpha
+        if "A" in image.file.mode:
+            i = []
+            for x in range(8):
+                i.append(x)
+                wait_for.append(pool.apply_async(run_dump, args=(image,), kwds={'alpha_index': i[::]}, error_callback=print_error))
+
+        # Try across the board
+        # i.e.: 0,0,0  01,01,01 etc
+        i = []
+        for x in range(8):
+            i.append(x)
+            wait_for.append(pool.apply_async(run_dump, args=(image,), kwds={'red_index': i[::], "green_index": i[::], "blue_index": i[::]}, error_callback=print_error))
+
+        # Wait for everything to finish
+        for w in wait_for: w.wait()
 
     return
     for r in range(0,8):

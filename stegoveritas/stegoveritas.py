@@ -24,6 +24,8 @@ import tempfile
 import hashlib
 import random
 
+from .helpers import generate_nonce
+
 from prettytable import PrettyTable
 
 class StegoVeritas(object):
@@ -52,89 +54,88 @@ class StegoVeritas(object):
             self.modules.append(module)
 
     def test_output(self, thing):
-            """
-            Args:
-                thing (bytes): Renerally from the dump functions
-                    ex: thing = b'\x01\x02\x03'
+        """
+        Args:
+            thing (bytes): Renerally from the dump functions
+                ex: thing = b'\x01\x02\x03'
 
-            Returns:
-                Nothing. Move output into keep directory if it's worth-while    
+        Returns:
+            Nothing. Move output into keep directory if it's worth-while    
 
-            
-            Test if output is worth keeping. If it is, move it into the results directory.
-            Initially, this is using the Unix file command on the output and checking for non "Data" returns
-            """
-            
-            assert type(thing) == bytes, 'test_output got unexpected thing type of {}'.format(type(thing))
+        
+        Test if output is worth keeping. If it is, move it into the results directory.
+        Initially, this is using the Unix file command on the output and checking for non "Data" returns
+        """
+        
+        assert type(thing) == bytes, 'test_output got unexpected thing type of {}'.format(type(thing))
 
 
-            # TODO: Test new logic...
-            # TODO: Iterate through binary offset to find buried data
+        # TODO: Test new logic...
+        # TODO: Iterate through binary offset to find buried data
 
-            #
-            # File magic test
-            #
+        #
+        # File magic test
+        #
 
-            m = magic.from_buffer(thing,mime=True)
+        m = magic.from_buffer(thing,mime=True)
 
-            # Generic Output
-            if m != 'application/octet-stream':
-                m = magic.from_buffer(thing,mime=False)
-                print("Found something worth keeping!\n{0}".format(m))
-                # Save it to disk
-                # TODO: Minor race condition here if we end up multi-processing
-                with open(os.path.join(self._keeper_directory, str(time.time())), "wb") as f:
-                    f.write(thing)
+        # Generic Output
+        if m != 'application/octet-stream':
+            m = magic.from_buffer(thing,mime=False)
+            print("Found something worth keeping!\n{0}".format(m))
+            # Save it to disk
+            with open(os.path.join(self._keeper_directory, str(time.time()) + "-" + generate_nonce()), "wb") as f:
+                f.write(thing)
 
-            #
-            # binwalk test
-            #
+        #
+        # binwalk test
+        #
 
-            # TODO: Update this to in-memory scanning if binwalk updates their stuff: https://github.com/ReFirmLabs/binwalk/issues/389
-            with tempfile.TemporaryDirectory() as tmpdirname:  
-                tmp_scan_file = os.path.join(tmpdirname, 'scanme')
+        # TODO: Update this to in-memory scanning if binwalk updates their stuff: https://github.com/ReFirmLabs/binwalk/issues/389
+        with tempfile.TemporaryDirectory() as tmpdirname:  
+            tmp_scan_file = os.path.join(tmpdirname, 'scanme')
 
-                # Couldn't find a good 'output directory' option for binwalk. Changing dirs because of this.
-                saved_dir = os.getcwd()
-                os.chdir(tmpdirname)
+            # Couldn't find a good 'output directory' option for binwalk. Changing dirs because of this.
+            saved_dir = os.getcwd()
+            os.chdir(tmpdirname)
 
-                with open(tmp_scan_file, 'wb') as f:
-                    f.write(thing)
+            with open(tmp_scan_file, 'wb') as f:
+                f.write(thing)
 
-                table = PrettyTable(['Offset', 'Carved/Extracted', 'Description', 'File Name'])
-                table.align = 'l'
-                keepers = []
+            table = PrettyTable(['Offset', 'Carved/Extracted', 'Description', 'File Name'])
+            table.align = 'l'
+            keepers = []
 
-                # Run the scan
-                for module in binwalk.scan(tmp_scan_file, signature=True, quiet=True, extract=True):
-                    for result in module.results:
-                        if result.file.path in module.extractor.output:
-                            if result.offset in module.extractor.output[result.file.path].carved:
-                                table.add_row([hex(result.offset), 'Carved', result.description, os.path.basename(module.extractor.output[result.file.path].carved[result.offset])])
-                                keepers.append(module.extractor.output[result.file.path].carved[result.offset])
-                                #print("Carved data from offset 0x%X to %s" % (result.offset, module.extractor.output[result.file.path].carved[result.offset]))
-                            if result.offset in module.extractor.output[result.file.path].extracted:
-                                #print(result.offset, module.extractor.output[result.file.path].extracted)
-                                table.add_row([hex(result.offset), 'Extracted', result.description, os.path.basename(module.extractor.output[result.file.path].extracted[result.offset].files[0])])
-                                keepers += module.extractor.output[result.file.path].extracted[result.offset].files
-                                #print("Extracted %d files from offset 0x%X to '%s' using '%s'" % (len(module.extractor.output[result.file.path].extracted[result.offset].files), result.offset, module.extractor.output[result.file.path].extracted[result.offset].files[0], module.extractor.output[result.file.path].extracted[result.offset].command))
+            # Run the scan
+            for module in binwalk.scan(tmp_scan_file, signature=True, quiet=True, extract=True):
+                for result in module.results:
+                    if result.file.path in module.extractor.output:
+                        if result.offset in module.extractor.output[result.file.path].carved:
+                            table.add_row([hex(result.offset), 'Carved', result.description, os.path.basename(module.extractor.output[result.file.path].carved[result.offset])])
+                            keepers.append(module.extractor.output[result.file.path].carved[result.offset])
+                            #print("Carved data from offset 0x%X to %s" % (result.offset, module.extractor.output[result.file.path].carved[result.offset]))
+                        if result.offset in module.extractor.output[result.file.path].extracted:
+                            #print(result.offset, module.extractor.output[result.file.path].extracted)
+                            table.add_row([hex(result.offset), 'Extracted', result.description, os.path.basename(module.extractor.output[result.file.path].extracted[result.offset].files[0])])
+                            keepers += module.extractor.output[result.file.path].extracted[result.offset].files
+                            #print("Extracted %d files from offset 0x%X to '%s' using '%s'" % (len(module.extractor.output[result.file.path].extracted[result.offset].files), result.offset, module.extractor.output[result.file.path].extracted[result.offset].files[0], module.extractor.output[result.file.path].extracted[result.offset].command))
 
-                # If we found something
-                if keepers != []:
-                    print(table)
-                    
-                    for keeper in keepers:
-                        keeper_dst = os.path.join(self._keeper_directory, os.path.basename(keeper))
+            # If we found something
+            if keepers != []:
+                print(table)
+                
+                for keeper in keepers:
+                    keeper_dst = os.path.join(self._keeper_directory, os.path.basename(keeper))
 
-                        if os.path.exists(keeper_dst):
-                            logger.warn('Keeper name already exists, modifying.')
-                            keeper_dst += '_' + hashlib.md5(str(random.random()).encode()).hexdigest()
+                    if os.path.exists(keeper_dst):
+                        logger.warn('Keeper name already exists, modifying.')
+                        keeper_dst += '_' + generate_nonce()
 
-                        shutil.move( keeper, keeper_dst )
+                    shutil.move( keeper, keeper_dst )
 
-                os.chdir(saved_dir)
-            
-            # TODO: Check if strings of output contain a known word, save if so.
+            os.chdir(saved_dir)
+        
+        # TODO: Check if strings of output contain a known word, save if so.
 
     def _preflight(self):
         """Checks for missing requirements."""
