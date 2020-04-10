@@ -54,10 +54,10 @@ def archlinux():
 
 def parrot():
 
-    packages = ['exempi']
+    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide']
 
     subprocess.run(command_start + ['apt-get','update'])
-    subprocess.run(command_start + ['apt-get','install','-y'])
+    subprocess.run(command_start + ['apt-get','install','-y'] + packages)
 
 # Standardize using sudo or not
 command_start = ['sudo'] if getpass.getuser() != 'root' else []
