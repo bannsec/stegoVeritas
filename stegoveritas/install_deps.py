@@ -15,7 +15,7 @@ def main():
 
     dist_name = distro.name().lower()
     
-    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux', 'kali gnu/linux']:
+    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux', 'kali gnu/linux', 'parrot gnu/linux']:
         debian()
 
     elif dist_name == 'fedora':
