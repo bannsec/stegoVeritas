@@ -126,7 +126,7 @@ class StegoVeritas(object):
                     keeper_dst = os.path.join(self._keeper_directory, os.path.basename(keeper))
 
                     if os.path.exists(keeper_dst):
-                        logger.warn('Keeper name already exists, modifying.')
+                        logger.warning('Keeper name already exists, modifying.')
                         keeper_dst += '_' + generate_nonce()
 
                     shutil.move( keeper, keeper_dst )

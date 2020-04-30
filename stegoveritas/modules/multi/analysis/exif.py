@@ -57,7 +57,7 @@ def run(multi):
 
         # Slugify means that we might have collisions
         if os.path.exists(outfile):
-            logger.warn('Exif outpat already exists, modifying.')
+            logger.warning('Exif outpat already exists, modifying.')
             outfile += '_' + hashlib.md5(str(random.random()).encode()).hexdigest()
 
         if isinstance(value, list):

@@ -52,7 +52,7 @@ def main():
     # Write it out
     if args.output is not None:
         if args.output.split('.')[-1].lower() not in ['png', 'bmp']:
-            logging.warn('Outputting to lossy formats might screw up LSB! Should probably stick to PNG or BMP formats.')
+            logging.warning('Outputting to lossy formats might screw up LSB! Should probably stick to PNG or BMP formats.')
 
         img.save(args.output)
     else:

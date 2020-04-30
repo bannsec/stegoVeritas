@@ -519,7 +519,7 @@ class Writer:
                 "transparent colour not allowed with alpha channel")
 
         if bytes_per_sample is not None:
-            warnings.warn('please use bitdepth instead of bytes_per_sample',
+            warnings.warning('please use bitdepth instead of bytes_per_sample',
                           DeprecationWarning)
             if bytes_per_sample not in (0.125, 0.25, 0.5, 1, 2):
                 raise ValueError(
@@ -1793,7 +1793,7 @@ class Reader:
         elif type == 'PLTE':
             # http://www.w3.org/TR/PNG/#11PLTE
             if self.plte:
-                warnings.warn("Multiple PLTE chunks present.")
+                warnings.warning("Multiple PLTE chunks present.")
             self.plte = data
             if len(data) % 3 != 0:
                 raise FormatError(
@@ -1806,7 +1806,7 @@ class Reader:
             try:
                 if self.colormap:
                     if not self.plte:
-                        warnings.warn(
+                        warnings.warning(
                           "PLTE chunk is required before bKGD chunk.")
                     self.background = struct.unpack('B', data)
                 else:
@@ -1819,7 +1819,7 @@ class Reader:
             self.trns = data
             if self.colormap:
                 if not self.plte:
-                    warnings.warn("PLTE chunk is required before tRNS chunk.")
+                    warnings.warning("PLTE chunk is required before tRNS chunk.")
                 else:
                     if len(data) > len(self.plte)/3:
                         # Was warning, but promoted to Error as it
@@ -1871,7 +1871,7 @@ class Reader:
                 # type == 'IDAT'
                 # http://www.w3.org/TR/PNG/#11IDAT
                 if self.colormap and not self.plte:
-                    warnings.warn("PLTE chunk is required before IDAT chunk")
+                    warnings.warning("PLTE chunk is required before IDAT chunk")
                 yield data
 
         def iterdecomp(idat):

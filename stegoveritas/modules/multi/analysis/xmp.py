@@ -56,7 +56,7 @@ def run(multi):
 
         # Slugify means that we might have collisions
         if os.path.exists(outfile):
-            logger.warn('XMP outpath already exists, modifying.')
+            logger.warning('XMP outpath already exists, modifying.')
             outfile += '_' + hashlib.md5(str(random.random()).encode()).hexdigest()
 
         with open(outfile, 'wb') as f:
