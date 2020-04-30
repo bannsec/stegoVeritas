@@ -66,8 +66,8 @@ def iter_modules(veritas):
         if instance.valid:
             yield instance
 
-from .image import SVImage
-from .multi import MultiHandler
+from modules.image import SVImage
+from modules.multi import MultiHandler
 
 # List of classes of modules to try
 modules =  [ SVImage, MultiHandler ]

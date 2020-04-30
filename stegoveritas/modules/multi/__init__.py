@@ -4,7 +4,7 @@ logger = logging.getLogger('StegoVeritas:Modules:Multi')
 
 import os
 import sys
-from .. import ModuleBase
+from modules import ModuleBase
 
 class MultiHandler(ModuleBase):
 

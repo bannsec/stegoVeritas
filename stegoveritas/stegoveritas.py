@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from . import Colorer
+import Colorer
 
 import logging
 logging.basicConfig(level=logging.WARN)
@@ -10,21 +10,21 @@ logger = logging.getLogger('StegoVeritas')
 import binascii
 import os
 import argparse
-from .version import version
+from version import version
 
 import magic
 import time
 import shutil
 from copy import copy
 
-from .install_deps import required_packages
+from install_deps import required_packages
 
 import binwalk
 import tempfile
 import hashlib
 import random
 
-from .helpers import generate_nonce
+from helpers import generate_nonce
 
 from prettytable import PrettyTable
 
@@ -256,7 +256,7 @@ def main(args=None):
     veritas = StegoVeritas(args=args)
     veritas.run()
 
-from . import modules
+import modules
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,5 @@
 
-from . import Colorer
+import Colorer
 import logging
 logger = logging.getLogger(__name__)
 

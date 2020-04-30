@@ -7,7 +7,7 @@ import sys
 from PIL import Image, ImageFile
 from prettytable import PrettyTable
 
-from .. import ModuleBase
+from modules import ModuleBase
 import hashlib
 
 class SVImage(ModuleBase):

@@ -7,7 +7,7 @@ from PIL import Image, ImageFilter, ImageFile, ImageEnhance, ImageOps
 import numpy
 from copy import copy
 import multiprocessing
-from ....helpers import print_error
+from helpers import print_error
 
 def run_filter(image, f_a, filt):
     try:
