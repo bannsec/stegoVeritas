@@ -1,32 +1,30 @@
 #!/usr/bin/env python3
 
-import Colorer
-
+# Standard library imports
 import logging
-logging.basicConfig(level=logging.WARN)
-
-logger = logging.getLogger('StegoVeritas')
-
 import binascii
 import os
 import argparse
-from version import version
-
-import magic
 import time
 import shutil
 from copy import copy
-
-from install_deps import required_packages
-
-import binwalk
 import tempfile
 import hashlib
 import random
 
+# Third party imports
+import magic
+import binwalk
+from prettytable import PrettyTable
+
+# Local application imports
+import Colorer
+from version import version
+from install_deps import required_packages
 from helpers import generate_nonce
 
-from prettytable import PrettyTable
+logging.basicConfig(level=logging.WARN)
+logger = logging.getLogger('StegoVeritas')
 
 class StegoVeritas(object):
 
