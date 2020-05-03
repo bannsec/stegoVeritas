@@ -4,8 +4,8 @@ logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Trailing')
 
 import os
 from struct import unpack
-from modules.image import png
-from modules.image.gif import gif as gif_module
+from stegoveritas.modules.image import png
+from stegoveritas.modules.image.gif import gif as gif_module
 
 def run(image):
     """Extracts trailing data from the image.

@@ -1,3 +1,3 @@
-from version import version
-from stegoveritas import StegoVeritas
-import modules
+from stegoveritas.version import version
+from stegoveritas.stegoveritas import StegoVeritas
+import stegoveritas.modules

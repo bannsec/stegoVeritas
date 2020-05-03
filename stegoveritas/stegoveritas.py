@@ -18,10 +18,10 @@ import binwalk
 from prettytable import PrettyTable
 
 # Local application imports
-import Colorer
-from version import version
-from install_deps import required_packages
-from helpers import generate_nonce
+import stegoveritas.Colorer
+from stegoveritas.version import version
+from stegoveritas.install_deps import required_packages
+from stegoveritas.helpers import generate_nonce
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger('StegoVeritas')
@@ -254,7 +254,7 @@ def main(args=None):
     veritas = StegoVeritas(args=args)
     veritas.run()
 
-import modules
+from stegoveritas import modules
 
 if __name__ == '__main__':
     main()

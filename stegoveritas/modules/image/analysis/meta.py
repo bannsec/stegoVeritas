@@ -5,7 +5,7 @@ logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:Meta')
 import os
 from struct import unpack
 import exifread
-from modules.image import png
+from stegoveritas.modules.image import png
 
 def run(image):
     """Extracts meta data from the image.

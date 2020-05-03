@@ -1,5 +1,5 @@
 
-import Colorer
+import stegoveritas.Colorer
 import logging
 logger = logging.getLogger(__name__)
 

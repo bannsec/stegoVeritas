@@ -9,7 +9,7 @@ import json
 import subprocess
 from prettytable import PrettyTable
 
-from helpers import slugify
+from stegoveritas.helpers import slugify
 
 def run(multi):
     """Checks for any Exif data in/about the file.

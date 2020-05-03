@@ -8,7 +8,7 @@ import hashlib
 import libxmp.utils
 from prettytable import PrettyTable
 
-from helpers import slugify
+from stegoveritas.helpers import slugify
 
 def run(multi):
     """Checks for any XMP data in the file.

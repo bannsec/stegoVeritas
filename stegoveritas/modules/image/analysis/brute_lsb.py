@@ -5,7 +5,7 @@ logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:BruteLSB')
 import os
 import shutil
 import multiprocessing
-from helpers import print_error
+from stegoveritas.helpers import print_error
 
 def run_dump(image, red_index=None, green_index=None, blue_index=None):
     logger.debug("Trying red={0} green={0} blue={0}".format(red_index, green_index, blue_index))
