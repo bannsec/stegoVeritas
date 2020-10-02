@@ -14,8 +14,9 @@ required_packages = ['exiftool', '7z', 'foremost']
 def main():
 
     dist_name = distro.name().lower()
-    
-    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux', 'kali gnu/linux']:
+
+    if dist_name in ['ubuntu', 'debian', 'kali', 'debian gnu/linux', 'kali gnu/linux', 'pop!_os', 'elementary os',
+                     'deepin', 'pureos']:
         debian()
 
     elif dist_name == 'fedora':
