@@ -5,7 +5,7 @@ services:
 python:
     - 3.6
 env:
-    - DOCKERFILE=Dockerfile
+    - DOCKERFILE=Dockerfile.ubuntu.bionic
     - DOCKERFILE=Dockerfile.debian
     - DOCKERFILE=Dockerfile.fedora
     - DOCKERFILE=Dockerfile.kali
