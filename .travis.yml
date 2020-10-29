@@ -6,6 +6,7 @@ python:
     - 3.6
 env:
     - DOCKERFILE=Dockerfile.ubuntu.bionic
+    - DOCKERFILE=Dockerfile.ubuntu.focal
     - DOCKERFILE=Dockerfile.debian
     - DOCKERFILE=Dockerfile.fedora
     - DOCKERFILE=Dockerfile.kali
