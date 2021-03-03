@@ -42,12 +42,14 @@ If you want to do something specific, you can check out the help:
 
 ```
 stegoveritas -h
-usage: stegoveritas [-h] [-out dir] [-debug] [-meta] [-imageTransform]
+usage: stegoveritas [-h] [-out dir] [-debug] [-password PASSWORD]
+                    [-wordlist WORDLIST] [-meta] [-imageTransform]
                     [-bruteLSB] [-colorMap [N [N ...]]]
                     [-colorMapRange Start End] [-extractLSB]
                     [-red index [index ...]] [-green index [index ...]]
                     [-blue index [index ...]] [-alpha index [index ...]]
-                    [-extract_frames] [-trailing] [-exif] [-xmp] [-carve]
+                    [-extract_frames] [-trailing] [-steghide] [-exif]
+                    [-xmp] [-carve] [-steghide]
                     file
 
 Yet another Stego tool
@@ -59,6 +61,10 @@ optional arguments:
   -h, --help            show this help message and exit
   -out dir              Directory to place output in. Defaults to ./results
   -debug                Enable debugging logging.
+  -password PASSWORD    When applicable, attempt to use this password to
+                        extract data.
+  -wordlist WORDLIST    When applicable, attempt to brute force with this
+                        wordlist.
 
 image options:
   -meta                 Check file for metadata information
@@ -79,6 +85,7 @@ image options:
   -alpha index [index ...]
   -extract_frames       Split up an animated gif into individual frames.
   -trailing             Check for trailing data on the given file
+  -steghide             Check for StegHide hidden info.
 
 multi options:
   -exif                 Check this file for exif information.
