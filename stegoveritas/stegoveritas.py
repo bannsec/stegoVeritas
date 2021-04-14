@@ -185,7 +185,7 @@ class StegoVeritas(object):
         image = parser.add_argument_group('image options')
         image.add_argument('-meta', action='store_true', help='Check file for metadata information')
         image.add_argument('-imageTransform', action='store_true', help='Perform various image transformations on the input image and save them to the output directory')
-        image.add_argument('-bruteLSB', action='store_true', help='Attempt to brute force any LSB related stegonography.')
+        image.add_argument('-bruteLSB', action='store_true', help='Attempt to brute force any LSB related steganography.')
         image.add_argument('-colorMap', nargs="*", metavar='N', type=int, default=None, help='Analyze a color map. Optional arguments are colormap indexes to save while searching')
         image.add_argument('-colorMapRange', nargs=2, metavar=('Start', 'End'), type=int, default=None, help='Analyze a color map. Same as colorMap but implies a range of colorMap values to keep')
         image.add_argument('-extractLSB', action='store_true', help='Extract a specific LSB RGB from the image. Use with -red, -green, -blue, and -alpha')
