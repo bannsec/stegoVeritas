@@ -7,9 +7,9 @@ import shutil
 import multiprocessing
 from ....helpers import print_error
 
-def run_dump(image, red_index=None, green_index=None, blue_index=None):
-    logger.debug("Trying red={0} green={0} blue={0}".format(red_index, green_index, blue_index))
-    o = image.dumpLSBRGBA(red_index=red_index, green_index=green_index, blue_index=blue_index)
+def run_dump(image, red_index=None, green_index=None, blue_index=None, alpha_index=None):
+    logger.debug("Trying red={} green={} blue={} alpha={}".format(red_index, green_index, blue_index, alpha_index))
+    o = image.dumpLSBRGBA(red_index=red_index, green_index=green_index, blue_index=blue_index, alpha_index=alpha_index)
     image.veritas.test_output(o)
 
 def run(image):

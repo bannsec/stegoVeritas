@@ -45,6 +45,17 @@ def test_extract_blue_0_lrtb():
         with open(os.path.join(tmpdirname, 'LSBExtracted.bin'),'rb') as f:
             assert hashlib.md5(f.read()).hexdigest() == '5626b080f13e0b8618da1aed934ab33c'
 
+def test_extract_alpha_0_lrtb():
+
+    with tempfile.TemporaryDirectory() as tmpdirname:  
+        args = [os.path.join(SCRIPTDIR, 'lsb_alpha_0.png'), '-out', tmpdirname, '-extractLSB', '-alpha', '0'] 
+        veritas = stegoveritas.StegoVeritas(args=args)
+        veritas.run()
+
+        # Verify we're expecting that
+        with open(os.path.join(tmpdirname, 'LSBExtracted.bin'),'rb') as f:
+            assert hashlib.md5(f.read()).hexdigest() == '8f8bed9d37bfe9550ba446401dd98d0c'
+
 def test_extract_rgb_0_lrtb():
 
     with tempfile.TemporaryDirectory() as tmpdirname:  
