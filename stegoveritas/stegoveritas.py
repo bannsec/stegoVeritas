@@ -17,7 +17,7 @@ import time
 import shutil
 from copy import copy
 
-from .install_deps import required_packages
+from stegoveritas_install_deps.install_deps import required_packages
 
 import binwalk
 import tempfile

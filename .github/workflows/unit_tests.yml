@@ -1,0 +1,27 @@
+on: [push, pull_request]
+
+name: Unit Tests
+jobs:
+
+  linux:
+    name: Linux Dockers
+    runs-on: ubuntu-latest
+    #continue-on-error: true
+    strategy:
+        fail-fast: false
+        matrix:
+            dockerfile: [Dockerfile.ubuntu.bionic, Dockerfile.ubuntu.focal, Dockerfile.debian, Dockerfile.fedora, Dockerfile.kali]
+            # Dockerfile.parrot
+
+    steps:
+        - name: Build test images
+          uses: docker/build-push-action@v2.6.1
+          with:
+            file: ${{ matrix.dockerfile }}
+            tags: bannsec/stegoveritas
+
+        - name: Run tests
+          run: |
+              docker run -i --rm -e TRAVIS_BRANCH=$TRAVIS_BRANCH bannsec/stegoveritas bash -c 'cd /opt/stegoveritas && pytest tests && if [ ! -z "$COVERALLS_REPO_TOKEN" ]; then coveralls; fi'
+
+# https://github.com/marketplace/actions/build-and-push-docker-images

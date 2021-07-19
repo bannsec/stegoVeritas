@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/bannsec/stegoVeritas.svg?branch=master)](https://travis-ci.org/bannsec/stegoVeritas)
+[![Unit Tests](https://github.com/bannsec/stegoVeritas/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/bannsec/stegoVeritas/actions/workflows/unit_tests.yml)
 [![PyPI Statistics](https://img.shields.io/pypi/dm/stegoveritas.svg)](https://pypistats.org/packages/stegoveritas)
 [![Latest Release](https://img.shields.io/pypi/v/stegoveritas.svg)](https://pypi.python.org/pypi/stegoveritas/)
 
