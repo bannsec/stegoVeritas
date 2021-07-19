@@ -64,7 +64,7 @@ image options:
   -meta                 Check file for metadata information
   -imageTransform       Perform various image transformations on the input
                         image and save them to the output directory
-  -bruteLSB             Attempt to brute force any LSB related stegonography.
+  -bruteLSB             Attempt to brute force any LSB related steganography.
   -colorMap [N [N ...]]
                         Analyze a color map. Optional arguments are colormap
                         indexes to save while searching
