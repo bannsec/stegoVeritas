@@ -127,7 +127,7 @@ class StegoVeritas(object):
                     keeper_dst = os.path.join(self._keeper_directory, os.path.basename(keeper))
 
                     if os.path.exists(keeper_dst):
-                        logger.warn('Keeper name already exists, modifying.')
+                        logger.warning('Keeper name already exists, modifying.')
                         keeper_dst += '_' + generate_nonce()
 
                     # When binwalk hits a gzip (and likely bz2/xz/etc), with the extract flag it will actually
@@ -139,10 +139,10 @@ class StegoVeritas(object):
                         keeper_minus_extension = ".".join(keeper.split(".")[:-1])
                         if keeper_minus_extension in keepers:
                             # This is fine. We may be missing info unfortunately.
-                            logger.warn("Looks like binwalk removed this file during extraction %s", keeper)
+                            logger.warning("Looks like binwalk removed this file during extraction %s", keeper)
                             continue
 
-                        logger.warn("Couldn't find extracted file named %s", keeper)
+                        logger.warning("Couldn't find extracted file named %s", keeper)
                         continue
 
                     shutil.move(keeper, keeper_dst)
