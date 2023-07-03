@@ -27,13 +27,21 @@ jobs:
     name: macOS
     runs-on: macos-latest
     steps:
+      - name: Update MacOS
+        run: |
+          sudo softwareupdate --install-rosetta
+          sudo softwareupdate --install --all
+      - name: Install Python3 and pip/virtualenv
+        run: |
+          brew install python3
+          pip3 install virtualenv
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          python -m venv env
+          python3 -m venv env
           source env/bin/activate
-          pip install -e .[dev]
+          pip3 install -e .[dev]
           stegoveritas_install_deps
       - name: Run tests
         run: |
