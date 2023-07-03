@@ -26,17 +26,24 @@ jobs:
   macos:
     name: macOS
     runs-on: macos-latest
+    env:
+      PATH: $PATH:/opt/local/bin
     steps:
       - name: Install Python3 and pip/virtualenv
         run: |
-          brew install python3
+          brew install python3 wget
           pip3 install virtualenv
+      - name: Install MacPorts
+        run: |
+          wget -O macports.pkg https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
+          sudo installer -pkg ./macports.pkg -target /
+          sudo port selfupdate
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Debug Shell
-        uses: lhotari/action-upterm@v1
-        with:
-          limit-access-to-actor: true
+      #- name: Debug Shell
+      #  uses: lhotari/action-upterm@v1
+      #  with:
+      #    limit-access-to-actor: true
       - name: Install dependencies
         run: |
           python3 -m venv env

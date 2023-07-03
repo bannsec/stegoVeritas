@@ -28,6 +28,9 @@ def main():
     elif dist_name in ['parrot gnu/linux', 'parrot os']:
         parrot()
 
+    elif dist_name == 'darwin':
+        darwin()
+
     else:
         logger.error('Unhandled distribution to install deps: {}'.format(dist_name))
         logger.error('Please poke me or submit a PR.')
@@ -59,6 +62,21 @@ def parrot():
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
+
+def darwin():
+    packages = ['libmagic', 'exiftool', 'p7zip', 'foremost', 'exempi']
+    ports = ['steghide']
+
+    # Brew packages
+    subprocess.run(command_start + ['brew','update'])
+    subprocess.run(command_start + ['brew','install'] + packages)
+
+    # Ports
+    try:
+        subprocess.run(command_start + ['port','selfupdate'])
+        subprocess.run(command_start + ['port', '-N', 'install'] + ports)
+    except FileNotFoundError:
+        logger.warning('MacPorts not found, skipping install of ports')
 
 # Standardize using sudo or not
 command_start = ['sudo'] if getpass.getuser() != 'root' else []
