@@ -29,7 +29,6 @@ jobs:
     steps:
       - name: Update MacOS
         run: |
-          sudo softwareupdate --install-rosetta
           sudo softwareupdate --install --all
       - name: Install Python3 and pip/virtualenv
         run: |
