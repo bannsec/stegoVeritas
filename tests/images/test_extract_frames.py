@@ -22,7 +22,9 @@ def test_extract_frames_gif():
 
         assert len(frames) == 3
 
-        expected_hashes = ['9b20f6b8452dcae537a3f22fc7dc6ba6a6ee9515ba4cdb336b4b9bf0b315585b', '0b62f28193c2cc87491b64bf87e8ed766563e0fd0bacaf8fecca518dcd92c40e', '6f49579ae11418d8cd81034cb3259c454d798494bade011829ad39c9416e6ccf']
+        expected_hashes_bionic = ['9b20f6b8452dcae537a3f22fc7dc6ba6a6ee9515ba4cdb336b4b9bf0b315585b', '0b62f28193c2cc87491b64bf87e8ed766563e0fd0bacaf8fecca518dcd92c40e', '6f49579ae11418d8cd81034cb3259c454d798494bade011829ad39c9416e6ccf']
+        expected_hashes_focal = ['c2eddccf13c33a52e8a65cd916a7908c98f948eda4bfbd7200bf316973dc6189', '9b20f6b8452dcae537a3f22fc7dc6ba6a6ee9515ba4cdb336b4b9bf0b315585b', 'b15f628685373e0c5a1beeafd59f7d4dbfd00138f0e527bb8eba46d0a60cc7dd']
+        expected_hashes = expected_hashes_bionic + expected_hashes_focal
 
         for f in frames:
             assert SVImage.hash_file(os.path.join(tmpdirname, f)) in expected_hashes
