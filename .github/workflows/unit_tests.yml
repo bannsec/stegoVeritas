@@ -27,9 +27,6 @@ jobs:
     name: macOS
     runs-on: macos-latest
     steps:
-      - name: Update MacOS
-        run: |
-          sudo softwareupdate --install --all
       - name: Install Python3 and pip/virtualenv
         run: |
           brew install python3
