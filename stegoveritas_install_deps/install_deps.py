@@ -19,7 +19,7 @@ def main():
                      'deepin', 'pureos', 'linux mint']:
         debian()
 
-    elif dist_name == 'fedora':
+    elif dist_name in ['fedora', 'fedora linux']:
         fedora()
 
     elif dist_name in ['archlinux', 'arch', 'arch linux', 'manjaro', 'manjaro linux']:
