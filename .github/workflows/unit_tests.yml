@@ -10,7 +10,7 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-            dockerfile: [Dockerfile.ubuntu.bionic, Dockerfile.ubuntu.focal, Dockerfile.debian, Dockerfile.fedora, Dockerfile.kali, Dockerfile.parrot]
+            dockerfile: [Dockerfile.ubuntu.jammy, Dockerfile.ubuntu.focal, Dockerfile.ubuntu.bionic, Dockerfile.debian, Dockerfile.fedora, Dockerfile.kali, Dockerfile.parrot]
 
     steps:
         - name: Build test images

@@ -16,7 +16,7 @@ $ pip3 install stegoveritas
 $ stegoveritas_install_deps
 ```
 
-`stegoveritas_install_deps` currently supports: ubuntu, debian, kali, parrotOS, fedora, archlinux.
+`stegoveritas_install_deps` currently supports: ubuntu, debian, kali, parrotOS, fedora, archlinux and MacOS.
 
 ### Option 2 -- docker
 
