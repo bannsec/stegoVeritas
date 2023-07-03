@@ -30,7 +30,14 @@ def run_enhancer(image, enhancers, outname):
     img.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + outname))
 
 def run_image_op(image, op, outname):
-    img = op(image.file)
+    try:
+        img = op(image.file)
+    except OSError as e:
+        if "not supported for this image mode" in str(e):
+            logger.warning("Error: %s. Op: %s", e, op.__name__)
+            return
+        else:
+            raise e
     img.save(os.path.join(image.veritas.results_directory, os.path.basename(image.veritas.file_name) + "_" + outname))
 
 def run_invert(image, f_a):
