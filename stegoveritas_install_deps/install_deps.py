@@ -25,7 +25,7 @@ def main():
     elif dist_name in ['archlinux', 'arch', 'arch linux', 'manjaro', 'manjaro linux']:
         archlinux()
 
-    elif dist_name == 'parrot gnu/linux':
+    elif dist_name in ['parrot gnu/linux', 'parrot os']:
         parrot()
 
     else:
@@ -55,7 +55,7 @@ def archlinux():
 
 def parrot():
 
-    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide']
+    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide', 'libmagic-dev']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
