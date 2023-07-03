@@ -3,12 +3,7 @@ import logging
 logger = logging.getLogger('StegoVeritas:Modules:Image:Analysis:ExtractFrames')
 
 import os
-from PIL import Image
-
-import png
 from copy import copy
-from struct import pack, unpack
-
 from apng import APNG
 
 def run(image):
@@ -181,7 +176,7 @@ def extract_gif(image):
 
     while True:
         outfile = os.path.join(image.veritas.results_directory, '{}_frame_{}.gif'.format(os.path.basename(image.veritas.file_name), frame_number))
-        image.file.save(outfile)
+        image.file.save(outfile, quality=100)
         
         frame_number += 1
 
