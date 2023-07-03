@@ -53,6 +53,7 @@ jobs:
           stegoveritas_install_deps
       - name: Run tests
         run: |
+          source env/bin/activate
           pytest tests
 
 # https://github.com/marketplace/actions/build-and-push-docker-images

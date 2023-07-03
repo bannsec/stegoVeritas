@@ -68,8 +68,8 @@ def darwin():
     ports = ['steghide']
 
     # Brew packages
-    subprocess.run(command_start + ['brew','update'])
-    subprocess.run(command_start + ['brew','install'] + packages)
+    subprocess.run(['brew','update'])
+    subprocess.run(['brew','install'] + packages)
 
     # Ports
     try:
