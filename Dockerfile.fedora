@@ -12,7 +12,7 @@ RUN yum update -y && \
 COPY --chown=stegoveritas:stegoveritas . /opt/stegoveritas/
 
 RUN source /opt/stegoveritas_venv/bin/activate && \
-    cd /opt/stegoveritas && pip3 install -e .[dev] && \
+    cd /opt/stegoveritas && pip3 install --no-cache-dir -e .[dev] && \
     stegoveritas_install_deps && \
     echo "source /opt/stegoveritas_venv/bin/activate" >> /home/stegoveritas/.bashrc && \
     chown -R stegoveritas:stegoveritas /opt/stegoveritas_venv

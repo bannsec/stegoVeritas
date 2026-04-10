@@ -10,11 +10,11 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-            dockerfile: [Dockerfile.ubuntu.jammy, Dockerfile.ubuntu.focal, Dockerfile.ubuntu.bionic, Dockerfile.debian, Dockerfile.fedora, Dockerfile.kali, Dockerfile.parrot]
+            dockerfile: [Dockerfile.ubuntu.noble, Dockerfile.ubuntu.jammy, Dockerfile.ubuntu.focal, Dockerfile.ubuntu.bionic, Dockerfile.debian, Dockerfile.fedora, Dockerfile.kali, Dockerfile.parrot]
 
     steps:
         - name: Build test images
-          uses: docker/build-push-action@v3
+          uses: docker/build-push-action@v6
           with:
             file: ${{ matrix.dockerfile }}
             tags: bannsec/stegoveritas
@@ -30,17 +30,16 @@ jobs:
       - name: Update PATH
         run: |
           echo "$PATH:/opt/local/bin" >> $GITHUB_PATH
-      - name: Install Python3 and pip/virtualenv
+      - name: Install Python3 and wget
         run: |
           brew install python3 wget
-          pip3 install virtualenv
       - name: Install MacPorts
         run: |
-          wget -O macports.pkg https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
+          wget -O macports.pkg https://github.com/macports/macports-base/releases/download/v2.12.4/MacPorts-2.12.4-15-Sequoia.pkg
           sudo installer -pkg ./macports.pkg -target /
           sudo port selfupdate
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       #- name: Debug Shell
       #  uses: lhotari/action-upterm@v1
       #  with:

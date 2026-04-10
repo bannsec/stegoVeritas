@@ -25,7 +25,7 @@ def main():
     elif dist_name in ['archlinux', 'arch', 'arch linux', 'manjaro', 'manjaro linux']:
         archlinux()
 
-    elif dist_name in ['parrot gnu/linux', 'parrot os']:
+    elif dist_name in ['parrot gnu/linux', 'parrot os', 'parrot security']:
         parrot()
 
     elif dist_name == 'darwin':
@@ -38,14 +38,14 @@ def main():
 
 def debian():
 
-    packages = ['libimage-exiftool-perl', 'libexempi*', 'p7zip-full', 'foremost', 'steghide', 'libmagic1']
+    packages = ['libimage-exiftool-perl', 'libexempi*', 'p7zip-full', 'foremost', 'steghide', 'libmagic1', 'default-jdk-headless']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)
 
 def fedora():
 
-    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost', 'steghide']
+    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost', 'steghide', 'java-latest-openjdk-devel']
 
     subprocess.run(command_start + ['yum','install','-y'] + packages)
 
@@ -58,7 +58,7 @@ def archlinux():
 
 def parrot():
 
-    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide', 'libmagic-dev']
+    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide', 'libmagic-dev', 'default-jdk-headless']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)

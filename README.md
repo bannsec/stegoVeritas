@@ -5,6 +5,9 @@
 # StegoVeritas
 Yet another Stego Tool
 
+# Requirements
+- Python >= 3.8
+
 # Quick Start
 
 ## Install
