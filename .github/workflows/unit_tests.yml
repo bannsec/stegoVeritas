@@ -14,7 +14,7 @@ jobs:
 
     steps:
         - name: Build test images
-          uses: docker/build-push-action@v3
+          uses: docker/build-push-action@v6
           with:
             file: ${{ matrix.dockerfile }}
             tags: bannsec/stegoveritas
@@ -39,7 +39,7 @@ jobs:
           sudo installer -pkg ./macports.pkg -target /
           sudo port selfupdate
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       #- name: Debug Shell
       #  uses: lhotari/action-upterm@v1
       #  with:
