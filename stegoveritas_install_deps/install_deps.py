@@ -45,7 +45,7 @@ def debian():
 
 def fedora():
 
-    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost', 'steghide']
+    packages = ['perl-Image-ExifTool', 'exempi', 'p7zip-plugins', 'foremost', 'steghide', 'java-latest-openjdk-devel']
 
     subprocess.run(command_start + ['yum','install','-y'] + packages)
 
