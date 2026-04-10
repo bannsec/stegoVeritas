@@ -58,7 +58,7 @@ def archlinux():
 
 def parrot():
 
-    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide', 'libmagic-dev']
+    packages = ['exempi', 'libimage-exiftool-perl', 'p7zip-full', 'foremost', 'steghide', 'libmagic-dev', 'default-jdk-headless']
 
     subprocess.run(command_start + ['apt-get','update'])
     subprocess.run(command_start + ['apt-get','install','-y'] + packages)

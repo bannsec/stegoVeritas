@@ -114,9 +114,10 @@ class StegoVeritas(object):
                             keepers.append(module.extractor.output[result.file.path].carved[result.offset])
                             # print("Carved data from offset 0x%X to %s" % (result.offset, module.extractor.output[result.file.path].carved[result.offset]))
                         if result.offset in module.extractor.output[result.file.path].extracted:
-                            # print(result.offset, module.extractor.output[result.file.path].extracted)
-                            table.add_row([hex(result.offset), 'Extracted', result.description, os.path.basename(module.extractor.output[result.file.path].extracted[result.offset].files[0])])
-                            keepers += module.extractor.output[result.file.path].extracted[result.offset].files
+                            extracted_files = module.extractor.output[result.file.path].extracted[result.offset].files
+                            if extracted_files:
+                                table.add_row([hex(result.offset), 'Extracted', result.description, os.path.basename(extracted_files[0])])
+                                keepers += extracted_files
                             # print("Extracted %d files from offset 0x%X to '%s' using '%s'" % (len(module.extractor.output[result.file.path].extracted[result.offset].files), result.offset, module.extractor.output[result.file.path].extracted[result.offset].files[0], module.extractor.output[result.file.path].extracted[result.offset].command))
 
             # If we found something
@@ -175,7 +176,7 @@ class StegoVeritas(object):
                                          epilog='Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
 
         # Core Options
-        parser.add_argument('-out', metavar='dir', type=str, help='Directory to place output in. Defaults to ./results', default=os.path.abspath('./results'))
+        parser.add_argument('-out', metavar='dir', type=str, help='Directory to place output in. Defaults to ./results', default=os.path.join(os.getcwd(), 'results'))
         parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
         parser.add_argument('-password', type=str, default=None, help='When applicable, attempt to use this password to extract data.')
         parser.add_argument('-wordlist', type=str, default=None, help='When applicable, attempt to brute force with this wordlist.')
