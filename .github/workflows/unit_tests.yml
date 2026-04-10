@@ -30,10 +30,9 @@ jobs:
       - name: Update PATH
         run: |
           echo "$PATH:/opt/local/bin" >> $GITHUB_PATH
-      - name: Install Python3 and pip/virtualenv
+      - name: Install Python3 and wget
         run: |
           brew install python3 wget
-          pip3 install virtualenv
       - name: Install MacPorts
         run: |
           wget -O macports.pkg https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
