@@ -25,7 +25,7 @@ def main():
     elif dist_name in ['archlinux', 'arch', 'arch linux', 'manjaro', 'manjaro linux']:
         archlinux()
 
-    elif dist_name in ['parrot gnu/linux', 'parrot os']:
+    elif dist_name in ['parrot gnu/linux', 'parrot os', 'parrot security']:
         parrot()
 
     elif dist_name == 'darwin':
