@@ -33,6 +33,7 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Environment :: Console'
     ],
+    python_requires='>=3.8',
     keywords='steg stego steganography stegoveritas',
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'dist']),
     install_requires=['pillow', 'numpy', 'python-magic', 'prettytable', 'exifread', 'python-xmp-toolkit', 'stegoveritas-binwalk', 'pypng', 'apng', 'stegoveritas-pfp', 'distro'],
