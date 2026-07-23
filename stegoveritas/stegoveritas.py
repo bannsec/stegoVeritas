@@ -176,7 +176,7 @@ class StegoVeritas(object):
                                          epilog='Have a good example? Wish it did something more? Submit a ticket: https://github.com/bannsec/stegoVeritas')
 
         # Core Options
-        parser.add_argument('-out', metavar='dir', type=str, help='Directory to place output in. Defaults to ./results', default=os.path.join(os.getcwd(), 'results'))
+        parser.add_argument('-out', metavar='dir', type=str, help='Directory to place output in. Defaults to ./results', default=None)
         parser.add_argument('-debug', action='store_true', help='Enable debugging logging.')
         parser.add_argument('-password', type=str, default=None, help='When applicable, attempt to use this password to extract data.')
         parser.add_argument('-wordlist', type=str, default=None, help='When applicable, attempt to brute force with this wordlist.')
@@ -210,7 +210,7 @@ class StegoVeritas(object):
             logging.root.setLevel(logging.DEBUG)
 
         self.file_name = self.args.file_name
-        self.results_directory = self.args.out
+        self.results_directory = self.args.out if self.args.out is not None else os.path.join(os.getcwd(), 'results')
 
         # Should this be considered an 'auto' run?
         # TODO: This is SUPER hacky... Should probably find a better way to determine if this is an auto run or not.
